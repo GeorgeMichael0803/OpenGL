@@ -2,23 +2,24 @@
 #define MESH_H
 
 #include "StandardIncludes.h"
+class Shader;
 
 class Mesh
 {
 public:
-    // Constructors / Destructors
-    Mesh();
+    Mesh() = default;
     virtual ~Mesh();
 
     // Methods
-    void Create();
+    void Create(Shader* _shader);
     void Cleanup();
-    void Render();
+    void Render(glm::mat4 wvp);
 
 private:
-    GLuint vertexBuffer;
-    std::vector<GLfloat> m_vertexData;
+    Shader* shader = nullptr;
+    GLuint vertexBuffer = 0;
+    std::vector<GLfloat> vertexData;
+    glm::mat4 world = glm::mat4(1);
 };
 
 #endif // MESH_H
-
