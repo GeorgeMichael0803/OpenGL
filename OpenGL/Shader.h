@@ -14,11 +14,13 @@ public:
 	//Accessors 
 	GLuint GetProgramID() { return programID; }
 	GLuint GetAttrVertices() { return attrVertices; }
+    GLuint GetAttrColors() { return attrColors; }
+    GLuint GetAttrWVP() { return attrWVP; }
 
 	//Methods 
 	void LoadShaders(const char* _vertexFilePath, const char* _fragmentFilePath);
 	void Cleanup();
-    GLuint GetAttrWVP() { return attrWVP; }
+    
 
 private:
     // Methods
@@ -30,6 +32,7 @@ private:
     // Members
     GLuint programID = 0;      // ID of our shader program
     GLuint attrVertices = 0;   // Handle for the attribute vertex buffer
+    GLuint attrColors = 0;   // Handle for the attribute Color
     GLuint attrWVP = 0;      
     GLint result = GL_FALSE;
     int infoLogLength = 0;

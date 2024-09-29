@@ -1,10 +1,9 @@
-#version 120 // OpenGL version 2.1 (minimum requirement)
+#version 330 // OpenGL version 3.3 (minimum requirement)
 
-uniform int RenderRedChannel;
-uniform int RenderGreenChannel;
-uniform int RenderBlueChannel;
+in vec4 retColor;    // MUST use the same name as the out variable used by the vertex shader
+out vec4 FragColor;
 
 void main()
 {
-    gl_FragColor = vec4(RenderRedChannel, RenderGreenChannel, RenderBlueChannel, 1.0);
+    FragColor = retColor;
 }

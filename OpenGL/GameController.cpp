@@ -9,26 +9,30 @@ void GameController::Initialize()
     GLFWwindow* window = WindowController::GetInstance().GetWindow(); // Call this first, as it creates a window required by GLEW
     M_ASSERT(glewInit() == GLEW_OK, "Failed to initialize GLEW."); // Initialize GLEW
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE); // Ensure we can capture the escape key
-    glClearColor(0.0f, 0.0f, 0.4f, 0.0f); // Dark blue background
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black background
+    glEnable(GL_CULL_FACE);
 
     camera = Camera(WindowController::GetInstance().GetResolution());
+    camera.LookAt({ 200, 200, 200 }, { 0, 0, 0 }, { 0, 1, 0 });
 
 
 
-    position1 = glm::vec3(4, 3, 3);  // camera positions
-    position2 = glm::vec3(2, 11, 8); 
-    position3 = glm::vec3(12, 7, 3); 
 
-    resolutions.push_back(Resolution(1280, 720, 45.0f));
-    resolutions.push_back(Resolution(1920, 1080, 10.0f));
-    resolutions.push_back(Resolution(2560, 1440, 75.0f));
 
-    // Initializing cameras with their respective positions
-    cameras.push_back(Camera(resolutions[0], position1));
-    cameras.push_back(Camera(resolutions[1], position2));
-    cameras.push_back(Camera(resolutions[2], position3));
+    //position1 = glm::vec3(4, 3, 3);  // camera positions
+    //position2 = glm::vec3(2, 11, 8); 
+    //position3 = glm::vec3(12, 7, 3); 
 
-    camera = cameras[currentCameraIndex];
+    //resolutions.push_back(Resolution(1280, 720, 45.0f));
+    //resolutions.push_back(Resolution(1920, 1080, 10.0f));
+    //resolutions.push_back(Resolution(2560, 1440, 75.0f));
+
+    //// Initializing cameras with their respective positions
+    //cameras.push_back(Camera(resolutions[0], position1));
+    //cameras.push_back(Camera(resolutions[1], position2));
+    //cameras.push_back(Camera(resolutions[2], position3));
+
+    //camera = cameras[currentCameraIndex];
 
 }
 
@@ -58,36 +62,6 @@ void GameController::RunGame()
         glUniform1i(loc, (int)OpenGL::ToolWindow::RenderBlueChannel);
 
 
-        // Change camera view when 'C' is pressed
-        if (glfwGetKey(win, GLFW_KEY_C) == GLFW_PRESS) {
-            
-            currentCameraIndex += 1;
-            if (currentCameraIndex >= cameras.size()) {
-                currentCameraIndex = 0;
-            }
-            camera = cameras[currentCameraIndex];
-            
-            // soo it only happens when the key is pressed
-            while (glfwGetKey(win, GLFW_KEY_C) == GLFW_PRESS) {
-                glfwPollEvents();
-            }
-        }
-
-        // Change resolution when 'V' is pressed
-        if (glfwGetKey(win, GLFW_KEY_V) == GLFW_PRESS) {
-            //glfwPollEvents();
-            currentResolutionIndex += 1;
-            if (currentResolutionIndex >= resolutions.size()) {
-                currentResolutionIndex = 0;
-            }
-            cameras[currentCameraIndex] = Camera(resolutions[currentResolutionIndex], camera.GetPosition()); // Maintain the current camera position
-            camera = cameras[currentCameraIndex];
-
-            while (glfwGetKey(win, GLFW_KEY_V) == GLFW_PRESS) {
-                glfwPollEvents();
-            }
-            
-        }
 
 
 
@@ -101,5 +75,9 @@ void GameController::RunGame()
     mesh.Cleanup();
     shader.Cleanup();
 }
+
+
+
+
 
 

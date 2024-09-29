@@ -11,9 +11,14 @@ class Camera
 public:
     // Constructors / Destructors
     Camera() = default;
-    Camera(Resolution _resolution);
+    Camera(const Resolution& _resolution, const float _near = 0.1f, const float _far = 1000.0f);
     Camera(Resolution _resolution, glm::vec3 _position);
     virtual ~Camera() = default;
+
+    void LookAt(const glm::vec3& _position, const glm::vec3& _lookAt, const glm::vec3& _up)
+    {
+        view = glm::lookAt(_position, _lookAt, _up);
+    }
 
     // Accessors
     glm::mat4 GetProjection() { return projection; }

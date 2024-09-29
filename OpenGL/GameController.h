@@ -27,10 +27,10 @@ private:
     glm::vec3 position3;
 
 
-    vector<Camera> cameras;        // Array of Camera objects
-    vector<Resolution> resolutions; // Array of Resolution objects
-    int currentCameraIndex = 0;          // Current Camera index
-    int currentResolutionIndex = 0;      // Current Resolution index
+    //vector<Camera> cameras;        // Array of Camera objects
+    //vector<Resolution> resolutions; // Array of Resolution objects
+    //int currentCameraIndex = 0;          // Current Camera index
+    //int currentResolutionIndex = 0;      // Current Resolution index
 };
 
 #endif // GAME_CONTROLLER_H
