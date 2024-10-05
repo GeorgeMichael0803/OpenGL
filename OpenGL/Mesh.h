@@ -4,8 +4,7 @@
 #include "StandardIncludes.h"
 class Shader;
 
-class Mesh
-{
+class Mesh {
 public:
     Mesh() = default;
     virtual ~Mesh();

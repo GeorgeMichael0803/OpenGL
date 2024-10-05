@@ -1,83 +1,86 @@
 #include "GameController.h"
 #include "WindowController.h"
 #include "ToolWindow.h"
+#include <glm/glm.hpp>  // For glm::distance
+#include <glm/gtc/constants.hpp>  // For pi
 
-//Removed Constructor
-
-void GameController::Initialize()
-{
-    GLFWwindow* window = WindowController::GetInstance().GetWindow(); // Call this first, as it creates a window required by GLEW
-    M_ASSERT(glewInit() == GLEW_OK, "Failed to initialize GLEW."); // Initialize GLEW
-    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE); // Ensure we can capture the escape key
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black background
+void GameController::Initialize() {
+    GLFWwindow* window = WindowController::GetInstance().GetWindow(); // GLFW native window, use nullptr for native
+    M_ASSERT(glewInit() == GLEW_OK, "Failed to initialize GLEW.");
+    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+    glClearColor(0.0f, 0.0f, 0.5f, 1.0f); // Dark blue background
     glEnable(GL_CULL_FACE);
-
-    camera = Camera(WindowController::GetInstance().GetResolution());
-    camera.LookAt({ 200, 200, 200 }, { 0, 0, 0 }, { 0, 1, 0 });
-
-
-
-
-
-    //position1 = glm::vec3(4, 3, 3);  // camera positions
-    //position2 = glm::vec3(2, 11, 8); 
-    //position3 = glm::vec3(12, 7, 3); 
-
-    //resolutions.push_back(Resolution(1280, 720, 45.0f));
-    //resolutions.push_back(Resolution(1920, 1080, 10.0f));
-    //resolutions.push_back(Resolution(2560, 1440, 75.0f));
-
-    //// Initializing cameras with their respective positions
-    //cameras.push_back(Camera(resolutions[0], position1));
-    //cameras.push_back(Camera(resolutions[1], position2));
-    //cameras.push_back(Camera(resolutions[2], position3));
-
-    //camera = cameras[currentCameraIndex];
-
-}
-
-void GameController::RunGame()
-{
-    // Show the C++/CLI tool window
-    OpenGL::ToolWindow^ window = gcnew OpenGL::ToolWindow();
-    window->Show();
 
     shader = Shader();
     shader.LoadShaders("SimpleVertexShader.vertexshader", "SimpleFragmentShader.fragmentshader");
 
-    mesh = Mesh();
-    mesh.Create(&shader);
+    camera = Camera(WindowController::GetInstance().GetResolution());
+    camera.LookAt({ 0, 0, 50 }, { 0, 0, 0 }, { 0, 1, 0 });
 
-    GLFWwindow* win = WindowController::GetInstance().GetWindow();
-    do
-    {
-        System::Windows::Forms::Application::DoEvents(); // Handle C++/CLI form events
+    playerMesh = Mesh();
+    playerMesh.Create(&shader);
 
-        GLint loc = 0;
-        loc = glGetUniformLocation(shader.GetProgramID(), "RenderRedChannel");
-        glUniform1i(loc, (int)OpenGL::ToolWindow::RenderRedChannel);
-        loc = glGetUniformLocation(shader.GetProgramID(), "RenderGreenChannel");
-        glUniform1i(loc, (int)OpenGL::ToolWindow::RenderGreenChannel);
-        loc = glGetUniformLocation(shader.GetProgramID(), "RenderBlueChannel");
-        glUniform1i(loc, (int)OpenGL::ToolWindow::RenderBlueChannel);
-
-
-
-
-
-
-        glClear(GL_COLOR_BUFFER_BIT);  // Clear the screen
-        mesh.Render(camera.GetProjection() * camera.GetView());
-        glfwSwapBuffers(win);  // Swap the front and back buffers
-        glfwPollEvents();
-    } while (glfwGetKey(win, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(win) == 0);  // Check if the ESC key was pressed and if the window was closed
-
-    mesh.Cleanup();
-    shader.Cleanup();
+    // Initialize NPCs
+    for (int i = 0; i < 10; ++i) {
+        NPC npc;
+        npc.Create(&shader);
+        npcs.push_back(npc);
+    }
 }
 
+void GameController::RunGame() {
+    GLFWwindow* window = WindowController::GetInstance().GetWindow();
 
+    do {
+        System::Windows::Forms::Application::DoEvents(); 
 
+        // Player movement logic
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) playerPosition.y += 0.035f;
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) playerPosition.y -= 0.035f;
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) playerPosition.x -= 0.035f;
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) playerPosition.x += 0.035f;
 
+        // Clear screen
+        glClear(GL_COLOR_BUFFER_BIT );  //| GL_DEPTH_BUFFER_BIT
 
+        // Rendering the player
+        glm::mat4 playerWorldMatrix = glm::translate(glm::mat4(1.0f), playerPosition);
+        playerMesh.Render(camera.GetProjection() * camera.GetView() * playerWorldMatrix);
 
+        // NPC logic
+        for (int i = 0; i < 10; ++i) {
+            glm::vec3 npcPosition = npcs[i].GetPosition();
+            float distance = glm::distance(playerPosition, npcPosition);
+
+            // NPC moves away if closer than 10 units
+            if (distance < 10.0f) {
+                glm::vec3 direction = glm::normalize(npcPosition - playerPosition);  // Direction away from player
+                npcPosition += direction * 0.01f;
+            }
+            // NPC moves closer if farther than 11 units
+            else if (distance > 11.0f) {
+                glm::vec3 direction = glm::normalize(playerPosition - npcPosition);  // Direction towards player
+                npcPosition += direction * 0.01f;
+            }
+
+            // NPC tagged if within 1 unit
+            if (distance < 1.0f) {
+                npcs[i].SetTagged(true);
+            }
+
+            // Update NPC's position
+            npcs[i].SetPosition(npcPosition);
+
+            //To Render NPC facing the player
+            npcs[i].Render(camera.GetProjection() * camera.GetView(), playerPosition);
+        }
+
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    } while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0);
+
+    // Cleanup
+    playerMesh.Cleanup();
+    for (int i = 0; i < 10; ++i) npcs[i].Cleanup();
+    shader.Cleanup();
+}

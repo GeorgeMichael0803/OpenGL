@@ -5,6 +5,7 @@
 #include "Shader.h"
 #include "Mesh.h"
 #include "Camera.h"
+#include "NPC.h"
 
 class GameController : public Singleton<GameController>
 {
@@ -19,18 +20,12 @@ public:
 
 private:
     Shader shader = {};
-    Mesh mesh = {};
-    Camera camera={};
+    Mesh playerMesh = {};
+    Camera camera = {};
 
-    glm::vec3 position1;
-    glm::vec3 position2;
-    glm::vec3 position3;
+    glm::vec3 playerPosition = glm::vec3(0.0f, 0.0f, 0.0f);  // Player starting position
 
-
-    //vector<Camera> cameras;        // Array of Camera objects
-    //vector<Resolution> resolutions; // Array of Resolution objects
-    //int currentCameraIndex = 0;          // Current Camera index
-    //int currentResolutionIndex = 0;      // Current Resolution index
+    std::vector<NPC> npcs;  // vector for 10 NPCs
 };
 
 #endif // GAME_CONTROLLER_H
