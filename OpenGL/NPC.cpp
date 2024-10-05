@@ -1,7 +1,7 @@
 #include "NPC.h"
 #include "glm/gtc/random.hpp"
 #include "Shader.h"
-#include "glm/gtx/vector_angle.hpp" // For generating random directions
+
 
 NPC::NPC() {
     float randomAngle = glm::linearRand(0.0f, 2.0f * glm::pi<float>());

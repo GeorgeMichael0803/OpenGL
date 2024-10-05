@@ -1,8 +1,6 @@
 #include "GameController.h"
 #include "WindowController.h"
 #include "ToolWindow.h"
-#include <glm/glm.hpp>  // For glm::distance
-#include <glm/gtc/constants.hpp>  // For pi
 
 void GameController::Initialize() {
     GLFWwindow* window = WindowController::GetInstance().GetWindow(); // GLFW native window, use nullptr for native
