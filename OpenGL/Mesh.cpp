@@ -3,6 +3,10 @@
 
 // Removed Constructor
 
+//#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/ext.hpp>
+
+
 Mesh::~Mesh()
 {
     if (vertexBuffer != 0)
@@ -105,63 +109,69 @@ void Mesh::Cleanup()
 
 void Mesh::Render(glm::mat4 wvp)
 {
-    glUseProgram(shader->GetProgramID()); // Use our shader
+    scroll.x += 0.001f; 
+    scroll.y += 0.0f;
 
-    world = glm::rotate(world, 0.01f, { 0, 1, 0 });
+    glUseProgram(shader->GetProgramID()); // Use the shader
+
+    world = glm::rotate(world, 0.001f, { 0, 1, 0 });
     wvp *= world;
-    glUniformMatrix4fv(shader->GetAttrWVP(), 1, FALSE, &wvp[0][0]);
+    glUniformMatrix4fv(shader->GetAttrWVP(), 1, GL_FALSE, &wvp[0][0]);
 
-    // Set the Verticies attribute buffer
+    // Bind the vertex buffer
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+
+    // Set the Vertices attribute buffer
     glEnableVertexAttribArray(shader->GetAttrVertices());
     glVertexAttribPointer(
-        shader->GetAttrVertices(),  // Match the layout in the shader.
-        3,                          // size
+        shader->GetAttrVertices(),  // Match the layout in the shader
+        3,                          // size (3 floats for vertex position)
         GL_FLOAT,                   // type
         GL_FALSE,                   // normalized?
         8 * sizeof(float),          // stride (8 floats per vertex definition)
         (void*)0                    // array buffer offset
     );
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer); // Bind the vertex buffer
-
 
     // Set the Colors attribute buffer
     glEnableVertexAttribArray(shader->GetAttrColors());
     glVertexAttribPointer(
         shader->GetAttrColors(),    // Match the layout in the shader
-        3,                          // size
+        3,                          // size (3 floats for color)
         GL_FLOAT,                   // type
         GL_FALSE,                   // normalized?
         8 * sizeof(float),          // stride (8 floats per vertex definition)
         (void*)(3 * sizeof(float))  // array buffer offset
     );
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer); // Bind the index buffer
 
-    // Set the texture attribute buffer
+    // Set the Texture attribute buffer
     glEnableVertexAttribArray(shader->GetAttrTexCoords());
-    glVertexAttribPointer(shader->GetAttrTexCoords(),
-        2, GL_FLOAT, GL_FALSE,        // size, type, normalized?
-        8 * sizeof(float),            // stride (8 floats per vertex definition)
-        (void*)(6 * sizeof(float))    // array buffer offset
+    glVertexAttribPointer(
+        shader->GetAttrTexCoords(),
+        2, GL_FLOAT, GL_FALSE,      // size (2 floats for texture coordinates)
+        8 * sizeof(float),          // stride (8 floats per vertex definition)
+        (void*)(6 * sizeof(float))  // array buffer offset
     );
 
-    // Activate texture
+    // Update the scrollOffset in the shader
+    glUniform2fv(shader->GetScroll(), 1, glm::value_ptr(scroll));
+
+    // Bind textures
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture.GetTexture());  // Bind the texture
+    glBindTexture(GL_TEXTURE_2D, texture.GetTexture());
     glUniform1i(shader->GetSampler1(), 0);
 
     glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, texture2.GetTexture()); // Bind the texture
+    glBindTexture(GL_TEXTURE_2D, texture2.GetTexture());
     glUniform1i(shader->GetSampler2(), 1);
 
-
-
-    // Draw elements
-    glDrawElements(GL_TRIANGLES, indexData.size(), GL_UNSIGNED_BYTE, (void*)0); // Draw based off index data
+    // Bind index buffer and draw
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glDrawElements(GL_TRIANGLES, indexData.size(), GL_UNSIGNED_BYTE, (void*)0);
 
     // Disable vertex attribute arrays
     glDisableVertexAttribArray(shader->GetAttrVertices());
     glDisableVertexAttribArray(shader->GetAttrColors());
     glDisableVertexAttribArray(shader->GetAttrTexCoords());
-
 }
+
 

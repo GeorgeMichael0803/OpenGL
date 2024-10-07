@@ -22,6 +22,10 @@ using namespace std;
 #include <glm/glm.hpp>    // Include GLM
 #include <glm/gtc/matrix_transform.hpp> // View / Projection
 
+//#define GLM_ENABLE_EXPERIMENTAL
+//    #include <glm/ext.hpp>
+//#endif GLM_ENABLE_EXPERIMENTAL
+
 #include "Resolution.h"
 #include "Singleton.h"
 

@@ -27,6 +27,8 @@ private:
     glm::mat4 world = glm::mat4(1);
     glm::vec3 position;
     glm::vec3 rotation;
+
+    glm::vec2 scroll = glm::vec2(0.0f, 0.0f);  
 };
 
 #endif // MESH_H

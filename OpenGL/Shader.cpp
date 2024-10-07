@@ -22,6 +22,8 @@ void Shader::LoadAttributes()
     sampler1 = glGetUniformLocation(programID, "sampler1");      // Get a handle for the texture sampler 1
     sampler2 = glGetUniformLocation(programID, "sampler2"); // Get a handle for the texture sampler 2
     attrWVP = glGetUniformLocation(programID, "WVP"); // Get a '' to the WVP
+
+    scrollLoc = glGetUniformLocation(programID, "scroll");
 }
 
 void Shader::EvaluateShader(int _infoLength, GLuint _id)

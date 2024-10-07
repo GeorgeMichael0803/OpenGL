@@ -20,6 +20,8 @@ public:
     GLuint GetSampler2() { return sampler2; }
     GLuint GetAttrWVP() { return attrWVP; }
 
+    GLuint GetScroll() { return scrollLoc; }
+
 	//Methods 
 	void LoadShaders(const char* _vertexFilePath, const char* _fragmentFilePath);
 	void Cleanup();
@@ -42,6 +44,9 @@ private:
     GLuint attrWVP = 0;      
     GLint result = GL_FALSE;
     int infoLogLength = 0;
+
+
+    GLuint scrollLoc = 0;
 };
 
 #endif //SHADER_H

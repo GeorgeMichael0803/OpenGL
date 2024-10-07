@@ -4,6 +4,9 @@ in vec3 vertices;    // Value sent from application to this attribute
 in vec3 colors;      // Input color from application
 in vec2 texCoords;   // Input texture coordinates
 
+ uniform vec2 scroll;  // Uniform for scrolling 
+
+
 uniform mat4 WVP;
 
 out vec3 retColor;   // Output a color to the fragment shader
@@ -13,5 +16,9 @@ void main()
 {
     gl_Position = WVP * vec4(vertices, 1.0);  // Transform the model to screen projection
     retColor = colors;
-    retTexCoord = texCoords;
+
+
+    // Scroll texture by adding the scroll offset to the texture coordinates
+    retTexCoord = texCoords ;
+
 }
