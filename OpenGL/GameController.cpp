@@ -13,7 +13,8 @@ void GameController::Initialize()
     glEnable(GL_CULL_FACE);
 
     camera = Camera(WindowController::GetInstance().GetResolution());
-    camera.LookAt({ 200, 200, 200 }, { 0, 0, 0 }, { 0, 1, 0 });
+    camera.LookAt({ 100, 100, 100 }, { 0, 0, 0 }, { 0, 1, 0 });
+
 
 
 

@@ -1,9 +1,26 @@
 #version 330 // OpenGL version 3.3 (minimum requirement)
 
-in vec4 retColor;    // MUST use the same name as the out variable used by the vertex shader
+in vec3 retColor;        // MUST use the same name as the out variable used by the vertex shader
+in vec2 retTexCoord;     // out variable from the vertex shader
+
 out vec4 FragColor;
+
+uniform sampler2D sampler1;
+uniform sampler2D sampler2;
 
 void main()
 {
-    FragColor = retColor;
+    // Example 1: Texture only  
+    //FragColor = texture(sampler1, retTexCoord);  
+    
+    // Example 2: Texture and Color
+    //FragColor = texture(sampler1, retTexCoord) * vec4(retColor, 1.0f);
+
+    // Example 3: 2 Textures
+    //FragColor = mix(texture(sampler1, retTexCoord), texture(sampler2, retTexCoord), 0.3);
+
+    // Example 2: Texture and Color
+    FragColor = mix(texture(sampler1, retTexCoord), texture(sampler2, retTexCoord), 0.3) * vec4(retColor, 1.0f);
+
+
 }
