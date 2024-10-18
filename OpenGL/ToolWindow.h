@@ -9,27 +9,24 @@ namespace OpenGL {
 	using namespace System::Data;
 	using namespace System::Drawing;
 
-	/// <summary>
-	/// Summary for ToolWindow
-	/// </summary>
 	public ref class ToolWindow : public System::Windows::Forms::Form
 	{
 	public:
-		static bool RenderRedChannel;
-		static bool RenderGreenChannel;
-		static bool RenderBlueChannel;
+		static float YValue;
+		static float UValue;
+		static float VValue;
+		static bool InvertColors;
+
 		ToolWindow(void)
 		{
 			InitializeComponent();
-			RenderRedChannel = checkBoxRedChannel->Checked;
-			RenderGreenChannel = checkBoxGreenChannel->Checked;
-			RenderBlueChannel = checkBoxBlueChannel->Checked;
+			YValue = trackBarY->Value / 100.0f; 
+			UValue = trackBarU->Value / 100.0f;
+			VValue = trackBarV->Value / 100.0f;
+			InvertColors = checkBoxInvertColors->Checked;
 		}
 
 	protected:
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
 		~ToolWindow()
 		{
 			if (components)
@@ -37,98 +34,185 @@ namespace OpenGL {
 				delete components;
 			}
 		}
-	private: System::Windows::Forms::CheckBox^ checkBoxRedChannel;
-	private: System::Windows::Forms::CheckBox^ checkBoxGreenChannel;
-	private: System::Windows::Forms::CheckBox^ checkBoxBlueChannel;
 
-
-	protected:
-
-	protected:
-
-	protected:
+	private: System::Windows::Forms::TrackBar^ trackBarY;
+	private: System::Windows::Forms::TrackBar^ trackBarU;
+	private: System::Windows::Forms::TrackBar^ trackBarV;
+	private: System::Windows::Forms::CheckBox^ checkBoxInvertColors;
+	private: System::Windows::Forms::Label^ labelY;
+	private: System::Windows::Forms::Label^ labelU;
+	private: System::Windows::Forms::Label^ labelV;
+	private: System::Windows::Forms::Label^ labelYValue;
+	private: System::Windows::Forms::Label^ labelUValue;
+	private: System::Windows::Forms::Label^ labelVValue;
 
 	private:
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		System::ComponentModel::Container ^components;
+		System::ComponentModel::Container^ components;
 
 #pragma region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
 		void InitializeComponent(void)
 		{
-			this->checkBoxRedChannel = (gcnew System::Windows::Forms::CheckBox());
-			this->checkBoxGreenChannel = (gcnew System::Windows::Forms::CheckBox());
-			this->checkBoxBlueChannel = (gcnew System::Windows::Forms::CheckBox());
+			this->trackBarY = (gcnew System::Windows::Forms::TrackBar());
+			this->trackBarU = (gcnew System::Windows::Forms::TrackBar());
+			this->trackBarV = (gcnew System::Windows::Forms::TrackBar());
+			this->checkBoxInvertColors = (gcnew System::Windows::Forms::CheckBox());
+			this->labelY = (gcnew System::Windows::Forms::Label());
+			this->labelU = (gcnew System::Windows::Forms::Label());
+			this->labelV = (gcnew System::Windows::Forms::Label());
+			this->labelYValue = (gcnew System::Windows::Forms::Label());
+			this->labelUValue = (gcnew System::Windows::Forms::Label());
+			this->labelVValue = (gcnew System::Windows::Forms::Label());
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBarY))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBarU))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBarV))->BeginInit();
 			this->SuspendLayout();
 			// 
-			// checkBoxRedChannel
+			// trackBarY
 			// 
-			this->checkBoxRedChannel->AutoSize = true;
-			this->checkBoxRedChannel->Checked = true;
-			this->checkBoxRedChannel->CheckState = System::Windows::Forms::CheckState::Checked;
-			this->checkBoxRedChannel->Location = System::Drawing::Point(13, 13);
-			this->checkBoxRedChannel->Name = L"checkBoxRedChannel";
-			this->checkBoxRedChannel->Size = System::Drawing::Size(88, 17);
-			this->checkBoxRedChannel->TabIndex = 0;
-			this->checkBoxRedChannel->Text = L"Red Channel";
-			this->checkBoxRedChannel->UseVisualStyleBackColor = true;
-			this->checkBoxRedChannel->CheckedChanged += gcnew System::EventHandler(this, &ToolWindow::checkBoxRedChannel_CheckedChanged);
+			this->trackBarY->Location = System::Drawing::Point(67, 25);
+			this->trackBarY->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->trackBarY->Maximum = 200;
+			this->trackBarY->Name = L"trackBarY";
+			this->trackBarY->Size = System::Drawing::Size(267, 45);
+			this->trackBarY->TabIndex = 0;
+			this->trackBarY->Value = 100;
+			this->trackBarY->Scroll += gcnew System::EventHandler(this, &ToolWindow::trackBarY_Scroll);
 			// 
-			// checkBoxGreenChannel
+			// trackBarU
 			// 
-			this->checkBoxGreenChannel->AutoSize = true;
-			this->checkBoxGreenChannel->Location = System::Drawing::Point(13, 37);
-			this->checkBoxGreenChannel->Name = L"checkBoxGreenChannel";
-			this->checkBoxGreenChannel->Size = System::Drawing::Size(97, 17);
-			this->checkBoxGreenChannel->TabIndex = 1;
-			this->checkBoxGreenChannel->Text = L"Green Channel";
-			this->checkBoxGreenChannel->UseVisualStyleBackColor = true;
-			this->checkBoxGreenChannel->CheckedChanged += gcnew System::EventHandler(this, &ToolWindow::checkBoxGreenChannel_CheckedChanged);
+			this->trackBarU->Location = System::Drawing::Point(67, 86);
+			this->trackBarU->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->trackBarU->Maximum = 200;
+			this->trackBarU->Name = L"trackBarU";
+			this->trackBarU->Size = System::Drawing::Size(267, 45);
+			this->trackBarU->TabIndex = 1;
+			this->trackBarU->Value = 100;
+			this->trackBarU->Scroll += gcnew System::EventHandler(this, &ToolWindow::trackBarU_Scroll);
 			// 
-			// checkBoxBlueChannel
+			// trackBarV
 			// 
-			this->checkBoxBlueChannel->AutoSize = true;
-			this->checkBoxBlueChannel->Location = System::Drawing::Point(13, 60);
-			this->checkBoxBlueChannel->Name = L"checkBoxBlueChannel";
-			this->checkBoxBlueChannel->Size = System::Drawing::Size(89, 17);
-			this->checkBoxBlueChannel->TabIndex = 3;
-			this->checkBoxBlueChannel->Text = L"Blue Channel";
-			this->checkBoxBlueChannel->UseVisualStyleBackColor = true;
-			this->checkBoxBlueChannel->CheckedChanged += gcnew System::EventHandler(this, &ToolWindow::checkBoxBlueChannel_CheckedChanged);
+			this->trackBarV->Location = System::Drawing::Point(67, 148);
+			this->trackBarV->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->trackBarV->Maximum = 200;
+			this->trackBarV->Name = L"trackBarV";
+			this->trackBarV->Size = System::Drawing::Size(267, 45);
+			this->trackBarV->TabIndex = 2;
+			this->trackBarV->Value = 100;
+			this->trackBarV->Scroll += gcnew System::EventHandler(this, &ToolWindow::trackBarV_Scroll);
+			// 
+			// checkBoxInvertColors
+			// 
+			this->checkBoxInvertColors->AutoSize = true;
+			this->checkBoxInvertColors->Location = System::Drawing::Point(17, 209);
+			this->checkBoxInvertColors->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
+			this->checkBoxInvertColors->Name = L"checkBoxInvertColors";
+			this->checkBoxInvertColors->Size = System::Drawing::Size(100, 20);
+			this->checkBoxInvertColors->TabIndex = 3;
+			this->checkBoxInvertColors->Text = L"Invert Colors";
+			this->checkBoxInvertColors->UseVisualStyleBackColor = true;
+			this->checkBoxInvertColors->CheckedChanged += gcnew System::EventHandler(this, &ToolWindow::checkBoxInvertColors_CheckedChanged);
+			// 
+			// labelY
+			// 
+			this->labelY->Location = System::Drawing::Point(17, 25);
+			this->labelY->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
+			this->labelY->Name = L"labelY";
+			this->labelY->Size = System::Drawing::Size(133, 28);
+			this->labelY->TabIndex = 4;
+			this->labelY->Text = L"Y";
+			// 
+			// labelU
+			// 
+			this->labelU->Location = System::Drawing::Point(17, 86);
+			this->labelU->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
+			this->labelU->Name = L"labelU";
+			this->labelU->Size = System::Drawing::Size(133, 28);
+			this->labelU->TabIndex = 5;
+			this->labelU->Text = L"U";
+			// 
+			// labelV
+			// 
+			this->labelV->Location = System::Drawing::Point(17, 148);
+			this->labelV->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
+			this->labelV->Name = L"labelV";
+			this->labelV->Size = System::Drawing::Size(133, 28);
+			this->labelV->TabIndex = 6;
+			this->labelV->Text = L"V";
+			// 
+			// labelYValue
+			// 
+			this->labelYValue->Location = System::Drawing::Point(347, 25);
+			this->labelYValue->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
+			this->labelYValue->Name = L"labelYValue";
+			this->labelYValue->Size = System::Drawing::Size(133, 28);
+			this->labelYValue->TabIndex = 7;
+			this->labelYValue->Text = L"100%";
+			// 
+			// labelUValue
+			// 
+			this->labelUValue->Location = System::Drawing::Point(347, 86);
+			this->labelUValue->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
+			this->labelUValue->Name = L"labelUValue";
+			this->labelUValue->Size = System::Drawing::Size(133, 28);
+			this->labelUValue->TabIndex = 8;
+			this->labelUValue->Text = L"100%";
+			// 
+			// labelVValue
+			// 
+			this->labelVValue->Location = System::Drawing::Point(347, 148);
+			this->labelVValue->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
+			this->labelVValue->Name = L"labelVValue";
+			this->labelVValue->Size = System::Drawing::Size(133, 28);
+			this->labelVValue->TabIndex = 9;
+			this->labelVValue->Text = L"100%";
 			// 
 			// ToolWindow
 			// 
-			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
+			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(284, 261);
-			this->Controls->Add(this->checkBoxBlueChannel);
-			this->Controls->Add(this->checkBoxGreenChannel);
-			this->Controls->Add(this->checkBoxRedChannel);
+			this->ClientSize = System::Drawing::Size(427, 271);
+			this->Controls->Add(this->checkBoxInvertColors);
+			this->Controls->Add(this->trackBarY);
+			this->Controls->Add(this->trackBarU);
+			this->Controls->Add(this->trackBarV);
+			this->Controls->Add(this->labelY);
+			this->Controls->Add(this->labelU);
+			this->Controls->Add(this->labelV);
+			this->Controls->Add(this->labelYValue);
+			this->Controls->Add(this->labelUValue);
+			this->Controls->Add(this->labelVValue);
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedToolWindow;
+			this->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->Name = L"ToolWindow";
 			this->Text = L"ToolWindow";
 			this->TopMost = true;
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBarY))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBarU))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBarV))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
 		}
 #pragma endregion
-	private: System::Void checkBoxRedChannel_CheckedChanged(System::Object^ sender, System::EventArgs^ e) 
+
+	private: System::Void trackBarY_Scroll(System::Object^ sender, System::EventArgs^ e)
 	{
-		RenderRedChannel = checkBoxRedChannel->Checked;
+		YValue = trackBarY->Value / 100.0f;
+		labelYValue->Text = trackBarY->Value.ToString() + "%"; // Update percentage label
 	}
-	private: System::Void checkBoxGreenChannel_CheckedChanged(System::Object^ sender, System::EventArgs^ e) 
+	private: System::Void trackBarU_Scroll(System::Object^ sender, System::EventArgs^ e)
 	{
-		RenderGreenChannel = checkBoxGreenChannel->Checked;
+		UValue = trackBarU->Value / 100.0f;
+		labelUValue->Text = trackBarU->Value.ToString() + "%"; 
 	}
-	private: System::Void checkBoxBlueChannel_CheckedChanged(System::Object^ sender, System::EventArgs^ e) 
+	private: System::Void trackBarV_Scroll(System::Object^ sender, System::EventArgs^ e)
 	{
-		RenderBlueChannel = checkBoxBlueChannel->Checked;
+		VValue = trackBarV->Value / 100.0f;
+		labelVValue->Text = trackBarV->Value.ToString() + "%"; 
 	}
-};
+	private: System::Void checkBoxInvertColors_CheckedChanged(System::Object^ sender, System::EventArgs^ e)
+	{
+		InvertColors = checkBoxInvertColors->Checked;
+	}
+	};
 }

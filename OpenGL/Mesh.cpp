@@ -26,7 +26,7 @@ void Mesh::Create(Shader* _shader)
     texture.LoadTexture("../Assets/Textures/Tacos.jpg");
 
     texture2 = Texture();
-    texture2.LoadTexture("../Assets/Textures/Pattern.png");
+    texture2.LoadTexture("../Assets/Textures/Checkerboard.jpg");
 
 
     // Old Vertex Data
@@ -107,7 +107,7 @@ void Mesh::Render(glm::mat4 wvp)
 {
     glUseProgram(shader->GetProgramID()); // Use our shader
 
-    world = glm::rotate(world, 0.01f, { 0, 1, 0 });
+    world = glm::rotate(world, 0.00f, { 0, 1, 0 });
     wvp *= world;
     glUniformMatrix4fv(shader->GetAttrWVP(), 1, FALSE, &wvp[0][0]);
 

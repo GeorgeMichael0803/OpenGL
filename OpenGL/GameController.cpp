@@ -54,13 +54,19 @@ void GameController::RunGame()
     {
         System::Windows::Forms::Application::DoEvents(); // Handle C++/CLI form events
 
-        GLint loc = 0;
-        loc = glGetUniformLocation(shader.GetProgramID(), "RenderRedChannel");
-        glUniform1i(loc, (int)OpenGL::ToolWindow::RenderRedChannel);
-        loc = glGetUniformLocation(shader.GetProgramID(), "RenderGreenChannel");
-        glUniform1i(loc, (int)OpenGL::ToolWindow::RenderGreenChannel);
-        loc = glGetUniformLocation(shader.GetProgramID(), "RenderBlueChannel");
-        glUniform1i(loc, (int)OpenGL::ToolWindow::RenderBlueChannel);
+        // Update the YUV values based on the sliders
+        GLint yLoc = glGetUniformLocation(shader.GetProgramID(), "YValue");
+        glUniform1f(yLoc, OpenGL::ToolWindow::YValue);
+
+        GLint uLoc = glGetUniformLocation(shader.GetProgramID(), "UValue");
+        glUniform1f(uLoc, OpenGL::ToolWindow::UValue);
+
+        GLint vLoc = glGetUniformLocation(shader.GetProgramID(), "VValue");
+        glUniform1f(vLoc, OpenGL::ToolWindow::VValue);
+
+        // Update the InvertColors checkbox state
+        GLint invertLoc = glGetUniformLocation(shader.GetProgramID(), "InvertColors");
+        glUniform1i(invertLoc, OpenGL::ToolWindow::InvertColors ? 1 : 0);
 
 
 
