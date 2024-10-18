@@ -14,10 +14,40 @@ void Shader::Cleanup()
     programID = 0;
 }
 
+void Shader::SetVec3(const char* _name, glm::vec3 _value)
+{
+    GLint loc = glGetUniformLocation(programID, _name);
+    if (loc != -1)
+    {
+        glUniform3fv(loc, 1, &_value[0]);
+    }
+}
+
+void Shader::SetMat4(const char* _name, glm::mat4 _value)
+{
+    GLint loc = glGetUniformLocation(programID, _name);
+    if (loc != -1)
+    {
+        glUniformMatrix4fv(loc, 1, GL_FALSE, &_value[0][0]);
+    }
+}
+
+void Shader::SetFloat(const char* _name, float _value)
+{
+    GLint loc = glGetUniformLocation(programID, _name); 
+    if (loc != -1)
+    {
+        glUniform1f(loc, _value); 
+    }
+}
+
+
+
 void Shader::LoadAttributes()
 {
     attrVertices = glGetAttribLocation(programID, "vertices"); // Get a handle for the vertex buffer
     attrColors = glGetAttribLocation(programID, "colors");     // Get a handle for the colors buffer
+    attrNormals = glGetAttribLocation(programID, "normals");   // Get a handle for the normals buffer
     attrTexCoords = glGetAttribLocation(programID, "texCoords"); // Get a handle for the texture coords buffer
     sampler1 = glGetUniformLocation(programID, "sampler1");      // Get a handle for the texture sampler 1
     sampler2 = glGetUniformLocation(programID, "sampler2"); // Get a handle for the texture sampler 2

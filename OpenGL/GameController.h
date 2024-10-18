@@ -18,13 +18,13 @@ public:
     void RunGame();
 
 private:
-    Shader shader = {};
-    Mesh mesh = {};
     Camera camera={};
 
-    glm::vec3 position1;
-    glm::vec3 position2;
-    glm::vec3 position3;
+    Shader shaderColor = {};
+    Shader shaderDiffuse = {};
+
+    Mesh meshBox = {};
+    Mesh meshLight = {};
 
 
     //vector<Camera> cameras;        // Array of Camera objects

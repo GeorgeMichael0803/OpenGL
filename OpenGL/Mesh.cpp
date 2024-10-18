@@ -29,8 +29,6 @@ void Mesh::Create(Shader* _shader)
     texture2.LoadTexture("../Assets/Textures/Pattern.png");
 
 
-    // Old Vertex Data
-
 #pragma region Icosahedron Vertex Data
 // Colors values taken from:
 // https://web.archive.org/web/20180301041827/https://prideout.net/archive/colors.php
@@ -66,13 +64,56 @@ void Mesh::Create(Shader* _shader)
 #pragma endregion
 
 
+#pragma region Old Vertex Data (commented out)
+    //vertexData = {
+    //    // Position        // RGB Color
+    //    50.0f,  50.0f, 0.0f,     1.0f, 0.0f, 0.0f,  1.0f, 1.0f, // top-right
+    //    50.0f, -50.0f, 0.0f,     0.0f, 1.0f, 0.0f,  1.0f ,0.0f,// bottom-right
+    //    -50.0f, -50.0f, 0.0f,    0.0f, 0.0f, 1.0f,  0.0f ,0.0f,// bottom-left
+    //    -50.0f,  50.0f, 0.0f,    1.0f, 1.0f, 1.0f,  0.0f, 1.0f // top-left
+    //};
+#pragma endregion 
 
-    vertexData = {
-        // Position        // RGB Color
-        50.0f,  50.0f, 0.0f,     1.0f, 0.0f, 0.0f,  1.0f, 1.0f, // top-right
-        50.0f, -50.0f, 0.0f,     0.0f, 1.0f, 0.0f,  1.0f ,0.0f,// bottom-right
-        -50.0f, -50.0f, 0.0f,    0.0f, 0.0f, 1.0f,  0.0f ,0.0f,// bottom-left
-        -50.0f,  50.0f, 0.0f,    1.0f, 1.0f, 1.0f,  0.0f, 1.0f // top-left
+        vertexData = {
+            /* Position */ /* Normals */ /* Texture Coords */
+            -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+            0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,
+            0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
+            0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
+            -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+            -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+            0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+            0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+            0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+            -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+            -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+            -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+            -0.5f, 0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+            -0.5f, -0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+            -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+            0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+            0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+            0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+            0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+            0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+            0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
+            0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f,
+            0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+            0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+            -0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
+            -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+            0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+            0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+            0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+            -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+            -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f
+
+
     };
 
 
@@ -80,15 +121,14 @@ void Mesh::Create(Shader* _shader)
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, vertexData.size() * sizeof(float), vertexData.data(), GL_STATIC_DRAW);
 
-    indexData = { 2, 0, 3, 2, 1, 0 };
 
+#pragma region IMPORTANT ALL INDEX DATA HAS BEEN COMMENTED OUT
+    //indexData = { 2, 0, 3, 2, 1, 0 };
 
-
-
-    glGenBuffers(1, &indexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, indexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, indexData.size() * sizeof(float), indexData.data(), GL_STATIC_DRAW);
-
+    //glGenBuffers(1, &indexBuffer);
+    //glBindBuffer(GL_ARRAY_BUFFER, indexBuffer);
+    //glBufferData(GL_ARRAY_BUFFER, indexData.size() * sizeof(float), indexData.data(), GL_STATIC_DRAW);
+#pragma endregion 
 }
 
 
@@ -103,65 +143,90 @@ void Mesh::Cleanup()
 }
 
 
-void Mesh::Render(glm::mat4 wvp)
+
+void Mesh::BindAttributes()
+{
+ #pragma region vertices attribute buffer
+    glEnableVertexAttribArray(shader->GetAttrVertices());
+    glVertexAttribPointer(shader->GetAttrVertices(),
+        3, GL_FLOAT, GL_FALSE,    // size, type normalized?,
+        8 * sizeof(float),        // stride (8 floats per vertex definition)
+        (void*)0                  // array buffer offset
+    );
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer); // Bind the vertex buffer
+ #pragma endregion
+
+#pragma region normals attribute buffer
+    glEnableVertexAttribArray(shader->GetAttrNormals());
+    glVertexAttribPointer(shader->GetAttrNormals(),
+        3, GL_FLOAT, GL_FALSE,
+        8 * sizeof(float), // stride (8 floats per vertex definition)
+        (void*)(3 * sizeof(float))
+    );
+#pragma endregion
+
+#pragma region texCoords attribute buffer
+    glEnableVertexAttribArray(shader->GetAttrTexCoords());
+    glVertexAttribPointer(shader->GetAttrTexCoords(),
+        2, GL_FLOAT, GL_FALSE,
+        8 * sizeof(float), // stride (8 floats per vertex definition)
+        (void*)(6 * sizeof(float))
+    );
+#pragma endregion
+
+#pragma region Index Buffer (Commented out)
+    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer); // Bind the index buffer
+#pragma endregion
+
+#pragma region Set Texture 0
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture.GetTexture());
+    glUniform1i(shader->GetSampler1(), 0);
+#pragma endregion
+
+#pragma region Set Texture 1
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, texture2.GetTexture());
+    glUniform1i(shader->GetSampler2(), 1);
+#pragma endregion
+}
+
+void Mesh::CalculateTransform()
+{
+    // Remember Matrix math is right to left so you read it bottom up
+    // If we write this we get: world = T * R(Yaw, Pitch, Roll) * S
+    world = glm::translate(glm::mat4(1.0f), position);
+    world = glm::rotate(world, rotation.y, glm::vec3(0, 1, 0)); // Yaw
+    world = glm::rotate(world, rotation.x, glm::vec3(1, 0, 0)); // Pitch
+    world = glm::rotate(world, rotation.z, glm::vec3(0, 0, 1)); // Roll
+    world = glm::scale(world, scale);
+}
+
+void Mesh::SetShaderVariables(glm::mat4 _pv)
+{
+    shader->SetMat4("World", world);
+    shader->SetVec3("AmbientLight", { 0.1f, 0.1f, 0.1f });
+    shader->SetVec3("DiffuseColor", { 1.0f, 1.0f, 1.0f });
+    shader->SetFloat("SpecularStrength", 10.0f);
+    shader->SetVec3("SpecularColor", { 3.0f, 0.0f, 0.0f });
+    shader->SetVec3("LightPosition", lightPosition);
+    shader->SetVec3("LightColor", lightColor);
+    shader->SetMat4("WVP", _pv * world);
+    shader->SetVec3("CameraPosition", cameraPosition);
+}
+
+void Mesh::Render(glm::mat4 _pv)
 {
     glUseProgram(shader->GetProgramID()); // Use our shader
 
-    world = glm::rotate(world, 0.01f, { 0, 1, 0 });
-    wvp *= world;
-    glUniformMatrix4fv(shader->GetAttrWVP(), 1, FALSE, &wvp[0][0]);
+    rotation.y += 0.005f;
 
-    // Set the Verticies attribute buffer
-    glEnableVertexAttribArray(shader->GetAttrVertices());
-    glVertexAttribPointer(
-        shader->GetAttrVertices(),  // Match the layout in the shader.
-        3,                          // size
-        GL_FLOAT,                   // type
-        GL_FALSE,                   // normalized?
-        8 * sizeof(float),          // stride (8 floats per vertex definition)
-        (void*)0                    // array buffer offset
-    );
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer); // Bind the vertex buffer
+    CalculateTransform();
+    SetShaderVariables(_pv);
+    BindAttributes();
 
-
-    // Set the Colors attribute buffer
-    glEnableVertexAttribArray(shader->GetAttrColors());
-    glVertexAttribPointer(
-        shader->GetAttrColors(),    // Match the layout in the shader
-        3,                          // size
-        GL_FLOAT,                   // type
-        GL_FALSE,                   // normalized?
-        8 * sizeof(float),          // stride (8 floats per vertex definition)
-        (void*)(3 * sizeof(float))  // array buffer offset
-    );
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer); // Bind the index buffer
-
-    // Set the texture attribute buffer
-    glEnableVertexAttribArray(shader->GetAttrTexCoords());
-    glVertexAttribPointer(shader->GetAttrTexCoords(),
-        2, GL_FLOAT, GL_FALSE,        // size, type, normalized?
-        8 * sizeof(float),            // stride (8 floats per vertex definition)
-        (void*)(6 * sizeof(float))    // array buffer offset
-    );
-
-    // Activate texture
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture.GetTexture());  // Bind the texture
-    glUniform1i(shader->GetSampler1(), 0);
-
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, texture2.GetTexture()); // Bind the texture
-    glUniform1i(shader->GetSampler2(), 1);
-
-
-
-    // Draw elements
-    glDrawElements(GL_TRIANGLES, indexData.size(), GL_UNSIGNED_BYTE, (void*)0); // Draw based off index data
-
-    // Disable vertex attribute arrays
+    glDrawArrays(GL_TRIANGLES, 0, vertexData.size() / 8);
     glDisableVertexAttribArray(shader->GetAttrVertices());
-    glDisableVertexAttribArray(shader->GetAttrColors());
+    glDisableVertexAttribArray(shader->GetAttrNormals());
     glDisableVertexAttribArray(shader->GetAttrTexCoords());
-
 }
-

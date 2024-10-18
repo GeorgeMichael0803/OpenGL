@@ -1,8 +1,10 @@
 #include "GameController.h"
 #include "WindowController.h"
+#ifdef USE_TOOL_WINDOW
 #include "ToolWindow.h"
+#endif
 
-//Removed Constructor
+
 
 void GameController::Initialize()
 {
@@ -10,48 +12,46 @@ void GameController::Initialize()
     M_ASSERT(glewInit() == GLEW_OK, "Failed to initialize GLEW."); // Initialize GLEW
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE); // Ensure we can capture the escape key
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black background
-    glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
 
     camera = Camera(WindowController::GetInstance().GetResolution());
-    camera.LookAt({ 100, 100, 100 }, { 0, 0, 0 }, { 0, 1, 0 });
+    camera.LookAt({ 2, 2, 2 }, { 0, 0, 0 }, { 0, 1, 0 });
 
-
-
-
-
-
-    //position1 = glm::vec3(4, 3, 3);  // camera positions
-    //position2 = glm::vec3(2, 11, 8); 
-    //position3 = glm::vec3(12, 7, 3); 
-
-    //resolutions.push_back(Resolution(1280, 720, 45.0f));
-    //resolutions.push_back(Resolution(1920, 1080, 10.0f));
-    //resolutions.push_back(Resolution(2560, 1440, 75.0f));
-
-    //// Initializing cameras with their respective positions
-    //cameras.push_back(Camera(resolutions[0], position1));
-    //cameras.push_back(Camera(resolutions[1], position2));
-    //cameras.push_back(Camera(resolutions[2], position3));
-
-    //camera = cameras[currentCameraIndex];
 
 }
 
 void GameController::RunGame()
 {
+#ifdef USE_TOOL_WINDOW
     // Show the C++/CLI tool window
     OpenGL::ToolWindow^ window = gcnew OpenGL::ToolWindow();
     window->Show();
+#endif
 
-    shader = Shader();
-    shader.LoadShaders("SimpleVertexShader.vertexshader", "SimpleFragmentShader.fragmentshader");
+    shaderColor = Shader();
+    shaderColor.LoadShaders("Color.vertexshader", "Color.fragmentshader");
 
-    mesh = Mesh();
-    mesh.Create(&shader);
+    shaderDiffuse = Shader();
+    shaderDiffuse.LoadShaders("Diffuse.vertexshader", "Diffuse.fragmentshader");
+
+    meshLight = Mesh();
+    meshLight.Create(&shaderColor);
+    meshLight.SetPosition({ 1.0f, 0.5f, 0.5f });
+    meshLight.SetScale({ 0.1f, 0.1f, 0.1f });
+
+    meshBox = Mesh();
+    meshBox.Create(&shaderDiffuse);
+    meshBox.SetLightColor({ 0.5f, 0.9f, 0.5f });
+    meshBox.SetLightPosition(meshLight.GetPosition());
+    meshBox.SetCameraPosition(camera.GetPosition());
+
+
 
     GLFWwindow* win = WindowController::GetInstance().GetWindow();
     do
     {
+#pragma region Winform (ifdef USE_TOOL_WINDOW used)
+#ifdef USE_TOOL_WINDOW
         System::Windows::Forms::Application::DoEvents(); // Handle C++/CLI form events
 
         GLint loc = 0;
@@ -61,21 +61,24 @@ void GameController::RunGame()
         glUniform1i(loc, (int)OpenGL::ToolWindow::RenderGreenChannel);
         loc = glGetUniformLocation(shader.GetProgramID(), "RenderBlueChannel");
         glUniform1i(loc, (int)OpenGL::ToolWindow::RenderBlueChannel);
+#endif
+#pragma endregion
 
-
-
-
-
-
-        glClear(GL_COLOR_BUFFER_BIT);  // Clear the screen
-        mesh.Render(camera.GetProjection() * camera.GetView());
-        glfwSwapBuffers(win);  // Swap the front and back buffers
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the screen and depth buffer
+        meshLight.Render(camera.GetProjection() * camera.GetView());
+        meshBox.Render(camera.GetProjection() * camera.GetView());
+        glfwSwapBuffers(win); // Swap the front and back buffers
         glfwPollEvents();
-    } while (glfwGetKey(win, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(win) == 0);  // Check if the ESC key was pressed and if the window was closed
 
-    mesh.Cleanup();
-    shader.Cleanup();
+    } while (glfwGetKey(win, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(win) == 0); // Check if the window was closed
+
+    meshLight.Cleanup();
+    meshBox.Cleanup();
+    shaderDiffuse.Cleanup();
+    shaderColor.Cleanup();
+
 }
+
 
 
 
