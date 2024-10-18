@@ -16,25 +16,6 @@ void GameController::Initialize()
     camera.LookAt({ 100, 100, 100 }, { 0, 0, 0 }, { 0, 1, 0 });
 
 
-
-
-
-
-    //position1 = glm::vec3(4, 3, 3);  // camera positions
-    //position2 = glm::vec3(2, 11, 8); 
-    //position3 = glm::vec3(12, 7, 3); 
-
-    //resolutions.push_back(Resolution(1280, 720, 45.0f));
-    //resolutions.push_back(Resolution(1920, 1080, 10.0f));
-    //resolutions.push_back(Resolution(2560, 1440, 75.0f));
-
-    //// Initializing cameras with their respective positions
-    //cameras.push_back(Camera(resolutions[0], position1));
-    //cameras.push_back(Camera(resolutions[1], position2));
-    //cameras.push_back(Camera(resolutions[2], position3));
-
-    //camera = cameras[currentCameraIndex];
-
 }
 
 void GameController::RunGame()
@@ -54,7 +35,7 @@ void GameController::RunGame()
     {
         System::Windows::Forms::Application::DoEvents(); // Handle C++/CLI form events
 
-        // Update the YUV values based on the sliders
+        
         GLint yLoc = glGetUniformLocation(shader.GetProgramID(), "YValue");
         glUniform1f(yLoc, OpenGL::ToolWindow::YValue);
 
@@ -63,8 +44,7 @@ void GameController::RunGame()
 
         GLint vLoc = glGetUniformLocation(shader.GetProgramID(), "VValue");
         glUniform1f(vLoc, OpenGL::ToolWindow::VValue);
-
-        // Update the InvertColors checkbox state
+        
         GLint invertLoc = glGetUniformLocation(shader.GetProgramID(), "InvertColors");
         glUniform1i(invertLoc, OpenGL::ToolWindow::InvertColors ? 1 : 0);
 

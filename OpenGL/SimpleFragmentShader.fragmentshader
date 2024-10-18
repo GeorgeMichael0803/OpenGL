@@ -8,53 +8,51 @@ out vec4 FragColor;
 uniform sampler2D sampler1;
 uniform sampler2D sampler2;
 
-uniform float YValue;      // Y adjustment from slider
-uniform float UValue;      // U adjustment from slider
-uniform float VValue;      // V adjustment from slider
-uniform bool InvertColors; // Checkbox for color inversion
+uniform float YValue;     
+uniform float UValue;      
+uniform float VValue;      
+uniform bool InvertColors; 
 
-// Function to convert RGB to YUV
+
+// Multiplying matrix values gives errors , try to find out why 
+// to convert RGB to YUV by directly applying matrix multiplication formula
 vec3 RGBtoYUV(vec3 rgb) {
     float Y = 0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b;
     float U = -0.14713 * rgb.r + -0.28886 * rgb.g + 0.436 * rgb.b;
     float V = 0.615 * rgb.r + -0.51499 * rgb.g + -0.10001 * rgb.b;
+
     return vec3(Y, U, V);
 }
 
-// Function to convert YUV back to RGB
+// to convert YUV back to RGB
 vec3 YUVtoRGB(vec3 yuv) {
     float R = yuv.r + 1.13983 * yuv.b;
     float G = yuv.r - 0.39465 * yuv.g - 0.58060 * yuv.b;
     float B = yuv.r + 2.03211 * yuv.g;
+
     return vec3(R, G, B);
 }
 
-// Declare variables outside the main function
-vec4 texColor;  // To store the blended texture color
-vec3 yuv;       // To store the YUV values
-vec3 rgb;       // To store the final RGB values
+vec4 texColor;  
+vec3 yuv;       
+vec3 rgb;     
 
 void main()
-{
-    // Step 1: Blend two textures (Taco and Checkerboard) at 50%
+{   
     texColor = mix(texture(sampler1, retTexCoord), texture(sampler2, retTexCoord), 0.5) * vec4(retColor, 1.0f);
 
-    // Step 2: Convert the blended color (texColor) from RGB to YUV
     yuv = RGBtoYUV(texColor.rgb);
 
-    // Step 3: Adjust Y, U, and V based on slider values
-    yuv.r *= YValue;  // Adjust Y component (brightness)
-    yuv.g *= UValue;  // Adjust U component (chrominance)
-    yuv.b *= VValue;  // Adjust V component (chrominance)
+    yuv.r *= YValue; 
+    yuv.g *= UValue;  
+    yuv.b *= VValue;  
 
-    // Step 4: Convert YUV back to RGB
     rgb = YUVtoRGB(yuv);
-
-    // Step 5: Apply color inversion if the "Invert Colors" checkbox is checked
+   
     if (InvertColors) {
         rgb = vec3(1.0) - rgb;  // Invert RGB values
     }
 
-    // Step 6: Output the final color
+
     FragColor = vec4(rgb, 1.0);
 }
