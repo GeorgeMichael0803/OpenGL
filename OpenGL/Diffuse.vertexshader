@@ -1,17 +1,17 @@
 #version 330 // OpenGL version 3.3 (minimum requirement)
 
-in vec3 vertices;     // Vertices of the model
-in vec3 normals;      // Normals for the Vertices
-in vec2 texCoords;    // Input texture coordinates
+in vec3 vertices;       // Vertices of the model
+in vec3 normals;        // Normals for the Vertices
+in vec2 texCoords;      // Input texture coordinates
 
-uniform vec3 CameraPosition; 
-uniform mat4 World;   
+uniform vec3 CameraPosition;
+uniform mat4 World;
 uniform mat4 WVP;
 
-out vec3 retFragPos;  // Output the position
-out vec3 retNormal;   // Output the normal
-out vec2 retTexCoord; // Output the texture coordinates
-out vec3 retViewDirection;   // Output the view direction
+out vec3 retFragPos;    // Output the position
+out vec3 retNormal;     // Output the normal
+out vec2 retTexCoord;   // Output the texture coordinates
+out vec3 retViewDirection; // Output the View Direction
 
 void main()
 {
@@ -19,5 +19,5 @@ void main()
     retNormal = normalize(mat3(transpose(inverse(World))) * normals);
     retTexCoord = texCoords;
     retFragPos = vec3(World * vec4(vertices, 1.0f));
-    retViewDirection = normalize(CameraPosition - retFragPos);  
+    retViewDirection = normalize(CameraPosition - retFragPos);
 }

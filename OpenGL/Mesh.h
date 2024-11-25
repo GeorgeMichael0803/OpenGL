@@ -25,7 +25,7 @@ public:
 
 
     // Methods
-    void Create(Shader* _shader);
+    void Create(Shader* _shader, std::string _file);
     void Cleanup();
     void CalculateTransform();
     void Render(glm::mat4 _pv);

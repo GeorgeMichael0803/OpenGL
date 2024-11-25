@@ -24,10 +24,12 @@ private:
 
     Shader shaderColor = {};
     Shader shaderDiffuse = {};
+    Shader shaderFont = {};
 
     std::vector<Mesh*> meshBoxes;
-    Mesh* meshLight = {};
     std::vector<Mesh*> lights;
+
+    Mesh* meshLight = {};   
 
 
     //vector<Camera> cameras;        // Array of Camera objects

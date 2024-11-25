@@ -77,13 +77,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\External\glew-2.1.0\include;$(SolutionDir)\External\glm;$(SolutionDir)\External\glfw-3.3.4\include;$(SolutionDir)\External\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\External\glew-2.1.0\include;$(SolutionDir)\External\glm;$(SolutionDir)\External\glfw-3.3.4\include;$(SolutionDir)\External\stb;$(SolutionDir)\External\obj_loader;$(SolutionDir)\External\freetype-2.10.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)\External\glew-2.1.0\lib;$(SolutionDir)\External\glfw-3.3.4\lib-vc2019;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\External\glew-2.1.0\lib;$(SolutionDir)\External\glfw-3.3.4\lib-vc2019;$(SolutionDir)\External\freetype-2.10.4\release static\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32d.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
     <PreBuildEvent>
@@ -137,6 +137,7 @@ copy /Y "$(SolutionDir)\External\glfw-3.3.4\lib-vc2019\glfw3.dll" "$(TargetDir)"
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Font.cpp" />
     <ClCompile Include="GameController.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -147,6 +148,7 @@ copy /Y "$(SolutionDir)\External\glfw-3.3.4\lib-vc2019\glfw3.dll" "$(TargetDir)"
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Font.h" />
     <ClInclude Include="GameController.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Resolution.h" />
@@ -164,6 +166,8 @@ copy /Y "$(SolutionDir)\External\glfw-3.3.4\lib-vc2019\glfw3.dll" "$(TargetDir)"
     <Text Include="Color.vertexshader" />
     <Text Include="Diffuse.fragmentshader" />
     <Text Include="Diffuse.vertexshader" />
+    <Text Include="Font.fragmentshader" />
+    <Text Include="Font.vertexshader" />
     <Text Include="SimpleFragmentShader.fragmentshader" />
     <Text Include="SimpleVertexShader.vertexshader" />
   </ItemGroup>
