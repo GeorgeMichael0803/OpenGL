@@ -41,6 +41,16 @@ void Shader::SetFloat(const char* _name, float _value)
     }
 }
 
+void Shader::SetTextureSampler(const char* _name, GLuint _texUint, int _texUintId, int _value)
+{
+    GLint loc = glGetUniformLocation(programID, _name);
+    if (loc != -1)
+    {
+        glActiveTexture(_texUint);
+        glBindTexture(GL_TEXTURE_2D, _value);
+        glUniform1i(loc, _texUintId);
+    }
+}
 
 
 void Shader::LoadAttributes()
@@ -49,8 +59,6 @@ void Shader::LoadAttributes()
     attrColors = glGetAttribLocation(programID, "colors");     // Get a handle for the colors buffer
     attrNormals = glGetAttribLocation(programID, "normals");   // Get a handle for the normals buffer
     attrTexCoords = glGetAttribLocation(programID, "texCoords"); // Get a handle for the texture coords buffer
-    sampler1 = glGetUniformLocation(programID, "sampler1");      // Get a handle for the texture sampler 1
-    sampler2 = glGetUniformLocation(programID, "sampler2"); // Get a handle for the texture sampler 2
     attrWVP = glGetUniformLocation(programID, "WVP"); // Get a '' to the WVP
 }
 

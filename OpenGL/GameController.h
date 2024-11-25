@@ -16,6 +16,8 @@ public:
     // Methods
     void Initialize();
     void RunGame();
+    std::vector<Mesh*>& GetLights() { return lights; }
+    const Camera& GetCamera() { return camera; }
 
 private:
     Camera camera={};
@@ -23,8 +25,9 @@ private:
     Shader shaderColor = {};
     Shader shaderDiffuse = {};
 
-    Mesh meshBox = {};
-    Mesh meshLight = {};
+    std::vector<Mesh*> meshBoxes;
+    Mesh* meshLight = {};
+    std::vector<Mesh*> lights;
 
 
     //vector<Camera> cameras;        // Array of Camera objects

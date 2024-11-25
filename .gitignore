@@ -365,3 +365,4 @@ FodyWeavers.xsd
 
 !External/**/
 !External/glew-2.1.0/*
+!Assets/Models/*

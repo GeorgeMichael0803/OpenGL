@@ -1,5 +1,7 @@
 #include "Mesh.h"
 #include "Shader.h"
+#include "GameController.h"
+
 
 // Removed Constructor
 
@@ -23,45 +25,12 @@ void Mesh::Create(Shader* _shader)
 {
     shader = _shader;
     texture = Texture();
-    texture.LoadTexture("../Assets/Textures/Tacos.jpg");
+    texture.LoadTexture("../Assets/Textures/MetalFrameWood.jpg");
 
     texture2 = Texture();
-    texture2.LoadTexture("../Assets/Textures/Pattern.png");
+    texture2.LoadTexture("../Assets/Textures/MetalFrame.jpg");
 
 
-#pragma region Icosahedron Vertex Data
-// Colors values taken from:
-// https://web.archive.org/web/20180301041827/https://prideout.net/archive/colors.php
-
-// Default values to reuse
-    //float a = 26.0f;
-    //float b = 42.0f;
-    //vertexData = {
-    //    /* Position */     /* RGBA Color */
-    //    -a, 0.0f, b,      1.0f,    0.0f,     0.0f,    1.0f, // Red
-    //     a, 0.0f, b,      1.0f,    0.549f,   0.0f,    1.0f, // Orange
-    //    -a, 0.0f, -b,     1.0f,    1.0f,     0.0f,    1.0f, // Yellow
-    //     a, 0.0f, -b,     0.0f,    1.0f,     0.0f,    1.0f, // Green
-    //    0.0f, b, a,       0.0f,    0.0f,     1.0f,    1.0f, // Blue
-    //    0.0f, b, -a,      0.294f,  0.0f,     0.51f,   1.0f, // Indigo
-    //    0.0f, -b, a,      0.502f,  0.0f,     0.502f,  1.0f, // Purple
-    //    0.0f, -b, -a,     1.0f,    1.0f,     1.0f,    1.0f, // White
-    //     b, a, 0.0f,      0.0f,    1.0f,     1.0f,    1.0f, // Cyan
-    //    -b, a, 0.0f,      0.0f,    0.0f,     0.0f,    1.0f, // Black
-    //     b, -a, 0.0f,     0.118f,  0.565f,   1.0f,    1.0f, // Dodger blue
-    //    -b, -a, 0.0f,     0.863f,  0.078f,   0.235f,  1.0f // Crimson
-    //};
-#pragma endregion
-
-#pragma region Icosahedron Index Data
-/*indexData = {
-    0, 6, 1, 0, 11, 6, 1, 4, 0, 1, 8, 4,
-    1, 10, 8, 2, 5, 3, 2, 9, 5, 2, 11, 9,
-    3, 7, 2, 3, 10, 7, 4, 8, 5, 4, 9, 0,
-    5, 8, 3, 5, 9, 4, 6, 10, 1, 6, 11, 7,
-    7, 10, 6, 7, 11, 2, 8, 10, 3, 9, 11, 0
-};*/
-#pragma endregion
 
 
 #pragma region Old Vertex Data (commented out)
@@ -73,6 +42,9 @@ void Mesh::Create(Shader* _shader)
     //    -50.0f,  50.0f, 0.0f,    1.0f, 1.0f, 1.0f,  0.0f, 1.0f // top-left
     //};
 #pragma endregion 
+
+
+#pragma region Cube with normals and texture coords
 
         vertexData = {
             /* Position */ /* Normals */ /* Texture Coords */
@@ -115,7 +87,7 @@ void Mesh::Create(Shader* _shader)
 
 
     };
-
+#pragma endregion
 
     glGenBuffers(1, &vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
@@ -179,15 +151,15 @@ void Mesh::BindAttributes()
 #pragma endregion
 
 #pragma region Set Texture 0
-    glActiveTexture(GL_TEXTURE0);
+    /*glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture.GetTexture());
-    glUniform1i(shader->GetSampler1(), 0);
+    glUniform1i(shader->GetSampler1(), 0);*/
 #pragma endregion
 
 #pragma region Set Texture 1
-    glActiveTexture(GL_TEXTURE1);
+    /*glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, texture2.GetTexture());
-    glUniform1i(shader->GetSampler2(), 1);
+    glUniform1i(shader->GetSampler2(), 1);*/
 #pragma endregion
 }
 
@@ -205,14 +177,34 @@ void Mesh::CalculateTransform()
 void Mesh::SetShaderVariables(glm::mat4 _pv)
 {
     shader->SetMat4("World", world);
-    shader->SetVec3("AmbientLight", { 0.1f, 0.1f, 0.1f });
-    shader->SetVec3("DiffuseColor", { 1.0f, 1.0f, 1.0f });
-    shader->SetFloat("SpecularStrength", 10.0f);
-    shader->SetVec3("SpecularColor", { 3.0f, 0.0f, 0.0f });
-    shader->SetVec3("LightPosition", lightPosition);
-    shader->SetVec3("LightColor", lightColor);
     shader->SetMat4("WVP", _pv * world);
     shader->SetVec3("CameraPosition", cameraPosition);
+
+    // Configure Light
+    std::vector<Mesh*>& lights = GameController::GetInstance().GetLights();
+    for (int i = 0; i < lights.size(); i++)
+    {
+        // Configure Light
+        shader->SetVec3(Concat("light[", i, "].position").c_str(), lights[i]->GetPosition());
+        shader->SetVec3(Concat("light[", i, "].direction").c_str(), lights[i]->GetLightDirection());
+
+        shader->SetVec3(Concat("light[", i, "].ambientColor").c_str(), { 0.1f, 0.1f, 0.1f });
+        shader->SetVec3(Concat("light[", i, "].diffuseColor").c_str(), lights[i]->GetColor());
+        shader->SetVec3(Concat("light[", i, "].specularColor").c_str(), { 3.0f, 3.0f, 3.0f });
+
+        shader->SetFloat(Concat("light[", i, "].constant").c_str(), 1.0f);
+        shader->SetFloat(Concat("light[", i, "].linear").c_str(), 0.09f);
+        shader->SetFloat(Concat("light[", i, "].quadratic").c_str(), 0.032f);
+
+        shader->SetFloat(Concat("light[", i, "].coneAngle").c_str(), glm::radians(5.0f));
+        shader->SetFloat(Concat("light[", i, "].falloff").c_str(), 200);
+    }
+
+    // Configure Material
+    shader->SetFloat("material.specularStrength", 8);
+    shader->SetTextureSampler("material.diffuseTexture", GL_TEXTURE0, 0, texture.GetTexture());
+    shader->SetTextureSampler("material.specularTexture", GL_TEXTURE1, 1, texture2.GetTexture());
+
 }
 
 void Mesh::Render(glm::mat4 _pv)
@@ -229,4 +221,11 @@ void Mesh::Render(glm::mat4 _pv)
     glDisableVertexAttribArray(shader->GetAttrVertices());
     glDisableVertexAttribArray(shader->GetAttrNormals());
     glDisableVertexAttribArray(shader->GetAttrTexCoords());
+}
+
+
+std::string Mesh::Concat(const std::string& _s1, int _index, const std::string& _s2)
+{
+    std::string index = std::to_string(_index);
+    return (_s1 + index + _s2);
 }
