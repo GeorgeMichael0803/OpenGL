@@ -3,7 +3,7 @@
 #ifdef USE_TOOL_WINDOW
 #include "ToolWindow.h"
 #endif
-
+#include "Font.h"
 
 
 void GameController::Initialize()
@@ -13,6 +13,8 @@ void GameController::Initialize()
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE); // Ensure we can capture the escape key
     glClearColor(0.1f, 0.1f, 0.1f, 0.0f); // Black background
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     srand(time(0));
 
     camera = Camera(WindowController::GetInstance().GetResolution());
@@ -35,6 +37,9 @@ void GameController::RunGame()
     shaderDiffuse = Shader();
     shaderDiffuse.LoadShaders("Diffuse.vertexshader", "Diffuse.fragmentshader");
 
+    shaderFont = Shader();
+    shaderFont.LoadShaders("Font.vertexshader", "Font.fragmentshader");
+
 
     Mesh* light = new Mesh();
     light->Create(&shaderColor, "../Assets/Models/Sphere.obj");
@@ -50,6 +55,9 @@ void GameController::RunGame()
     box->SetPosition({ 0.0f, 0.0f, 0.0f });
     meshBoxes.push_back(box);
 
+
+    Font* arialFont = new Font();
+    arialFont->Create(&shaderFont, "../Assets/Fonts/arial.ttf", 100);
 
 #pragma region Multiple lights and boxes commented out
     //// Create Lights
@@ -112,6 +120,8 @@ void GameController::RunGame()
             box->Render(camera.GetProjection() * camera.GetView());
         }
 
+        arialFont->RenderText("Hello World", 10, 500, 0.5f, { 1.0f, 1.0f, 0.0f });
+
         glfwSwapBuffers(win); // Swap the front and back buffers
         glfwPollEvents();
 
@@ -123,7 +133,15 @@ void GameController::RunGame()
         delete light;
     }
     lights.clear(); // Why not
-    meshBoxes.clear();  // Clear the vector to remove dangling pointers
+
+    for (auto box : meshBoxes)
+    {
+        box->Cleanup();
+        delete box;
+    }
+    meshBoxes.clear(); // Why not
+
+    shaderFont.Cleanup();
     shaderDiffuse.Cleanup();
     shaderColor.Cleanup();
 
