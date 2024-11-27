@@ -9,7 +9,7 @@ out vec4 FragColor;         // Output Fragment Color
 
 struct Material
 {
-    float specularStrength;
+    float specularStrength;   // Specular Strength from the UI
     sampler2D diffuseTexture;
     sampler2D specularTexture;
 };
@@ -20,13 +20,12 @@ struct Light
     vec3 color;
     vec3 ambientColor;
     vec3 diffuseColor;
-    vec3 specularColor;
+    vec3 specularColor; // Adjusted by sliders
 };
 
 uniform Material material;
 #define NUM_LIGHTS 1
 uniform Light light[NUM_LIGHTS];
-
 
 void main()
 {
@@ -35,20 +34,18 @@ void main()
     {
         // Calculate lambertian strength
         vec3 lightDir = normalize(light[i].position - retFragPos);
-        float lambertianStrength = dot(lightDir, retNormal);
+        float lambertianStrength = max(dot(lightDir, retNormal), 0.0);
 
-        // Calculate specular strength
+        // Calculate specular strength (affected by slider-controlled specularStrength)
         vec3 refl = reflect(-lightDir, retNormal);
-        float specularStrength = pow(max(dot(retViewDirection, refl), 0.0f), material.specularStrength);
+        float specularStrength = pow(max(dot(retViewDirection, refl), 0.0), material.specularStrength);
 
+        // Ambient, diffuse, and specular calculations
         vec3 ambient = texture(material.diffuseTexture, retTexCoord).rgb * light[i].ambientColor / NUM_LIGHTS;
         vec3 lambertian = lambertianStrength * texture(material.diffuseTexture, retTexCoord).rgb * light[i].diffuseColor;
-        vec3 specular = specularStrength * texture(material.specularTexture, retTexCoord).rgb * light[i].specularColor;
+        vec3 specular = specularStrength * light[i].specularColor; // Slider-adjusted specularColor
+
         finalColor += vec4(ambient + lambertian + specular, 1.0f);
     }
     FragColor = finalColor;
 }
-
-
-
- 
