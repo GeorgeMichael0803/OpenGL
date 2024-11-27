@@ -1,0 +1,19 @@
+#version 330 core
+
+in vec3 FragPos;    // World position of the fragment
+out vec4 FragColor; // Output fragment color
+
+void main()
+{
+    // Map the world position to color
+    vec3 color = vec3(
+        abs(FragPos.x) / 10.0,  // Red channel depends on X position
+        abs(FragPos.y) / 10.0,  // Green channel depends on Y position
+        abs(FragPos.z) / 10.0   // Blue channel depends on Z position
+    );
+
+    // Clamp color values to [0, 1]
+    color = clamp(color, 0.0, 1.0);
+
+    FragColor = vec4(color, 1.0);
+}

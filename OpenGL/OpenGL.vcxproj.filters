@@ -109,5 +109,11 @@
     <Text Include="Font.vertexshader">
       <Filter>Shaders</Filter>
     </Text>
+    <Text Include="ColorByPosition.fragmentshader">
+      <Filter>Shaders</Filter>
+    </Text>
+    <Text Include="ColorByPosition.vertexshader">
+      <Filter>Shaders</Filter>
+    </Text>
   </ItemGroup>
 </Project>

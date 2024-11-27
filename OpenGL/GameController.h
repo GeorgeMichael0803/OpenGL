@@ -5,6 +5,7 @@
 #include "Shader.h"
 #include "Mesh.h"
 #include "Camera.h"
+#include "WindowController.h"
 
 class GameController : public Singleton<GameController>
 {
@@ -25,10 +26,29 @@ private:
     Shader shaderColor = {};
     Shader shaderDiffuse = {};
     Shader shaderFont = {};
+    Shader shaderColorByPosition = {}; // New shader for "Color By Position"
 
     std::vector<Mesh*> meshBoxes;
     std::vector<Mesh*> lights;
     Mesh* meshLight = {};
+
+
+
+    // New variables for "Move Cubes to Sphere"
+    Mesh* sphere;                 // Sphere model
+    std::vector<Mesh*> cubes;     // Cube objects
+    Mesh* suzanne = {}; // Suzanne model used in multiple modes
+
+
+
+    
+    // New private methods
+    void HandleMoveCubesToSphere(GLFWwindow* win); // Logic for the "Move Cubes to Sphere" radio button
+    void HandleColorByPosition(GLFWwindow* win, const Resolution& currentResolution);
+    void SpawnCube();                              // Spawn a cube around the sphere
+    void PrintCubeCount();                         // Print the number of cubes in the scene
+    void Cleanup();
+    void HandleMoveLight();
 
 
     //vector<Camera> cameras;        // Array of Camera objects

@@ -1,3 +1,5 @@
+#include "StandardIncludes.h";
+
 #pragma once
 
 namespace OpenGL {
@@ -12,10 +14,24 @@ namespace OpenGL {
 	public ref class ToolWindow : public System::Windows::Forms::Form
 	{
 	public:
+		static float SpecularStrengthValue;
+		static float SpecularColorRValue;
+		static float SpecularColorGValue;
+		static float SpecularColorBValue;
+
 		ToolWindow(void)
 		{
 			InitializeComponent();
+			SpecularStrengthValue = trackBarSpecularStrength->Value;
+			SpecularColorRValue = trackBarSpecularColorR->Value / 100.0f;
+			SpecularColorGValue = trackBarSpecularColorG->Value / 100.0f;
+			SpecularColorBValue = trackBarSpecularColorB->Value / 100.0f;
 		}
+
+
+		System::Windows::Forms::RadioButton^ radioButtonMoveLight;
+		System::Windows::Forms::RadioButton^ radioButtonColorByPosition;
+		System::Windows::Forms::RadioButton^ radioButtonMoveCubes;
 
 	protected:
 		~ToolWindow()
@@ -27,9 +43,7 @@ namespace OpenGL {
 		}
 
 	private:
-		System::Windows::Forms::RadioButton^ radioButtonMoveLight;
-		System::Windows::Forms::RadioButton^ radioButtonColorByPosition;
-		System::Windows::Forms::RadioButton^ radioButtonMoveCubes;
+		
 		System::Windows::Forms::Button^ buttonResetLightPosition;
 		System::Windows::Forms::Button^ buttonResetSuzannePosition;
 		System::Windows::Forms::TrackBar^ trackBarSpecularStrength;
@@ -256,53 +270,31 @@ namespace OpenGL {
 		}
 #pragma endregion
 	
-		public:
-			float GetSpecularStrengthSliderValue()
-			{
-				return static_cast<float>(trackBarSpecularStrength->Value);
-			}
-
-			float GetSpecularColorRSliderValue()
-			{
-				return static_cast<float>(trackBarSpecularColorR->Value) / 100.0f; // Normalize 0-300 to 0.0-3.0
-			}
-
-			float GetSpecularColorGSliderValue()
-			{
-				return static_cast<float>(trackBarSpecularColorG->Value) / 100.0f;
-			}
-
-			float GetSpecularColorBSliderValue()
-			{
-				return static_cast<float>(trackBarSpecularColorB->Value) / 100.0f;
-			}
-
-
-			// Event handler for specular strength slider
 		private:
 			void OnSpecularStrengthChanged(System::Object^ sender, System::EventArgs^ e)
 			{
+				SpecularStrengthValue = static_cast<float>(trackBarSpecularStrength->Value);
 				valueSpecularStrength->Text = trackBarSpecularStrength->Value.ToString();
+				std::cout << "Specular Strength Changed: " << SpecularStrengthValue << std::endl;
 			}
 
-			// Event handler for specular color R slider
-		private:
 			void OnSpecularColorRChanged(System::Object^ sender, System::EventArgs^ e)
 			{
+				SpecularColorRValue = static_cast<float>(trackBarSpecularColorR->Value) / 100.0f;
 				valueSpecularColorR->Text = (trackBarSpecularColorR->Value / 100.0f).ToString("F2");
+				std::cout << "Specular Color R Changed: " << SpecularColorRValue << std::endl;
 			}
 
-			// Event handler for specular color G slider
-		private:
+
 			void OnSpecularColorGChanged(System::Object^ sender, System::EventArgs^ e)
 			{
+				SpecularColorGValue = static_cast<float>(trackBarSpecularColorG->Value) / 100.0f;
 				valueSpecularColorG->Text = (trackBarSpecularColorG->Value / 100.0f).ToString("F2");
 			}
 
-			// Event handler for specular color B slider
-		private:
 			void OnSpecularColorBChanged(System::Object^ sender, System::EventArgs^ e)
 			{
+				SpecularColorBValue = static_cast<float>(trackBarSpecularColorB->Value) / 100.0f;
 				valueSpecularColorB->Text = (trackBarSpecularColorB->Value / 100.0f).ToString("F2");
 			}
 
