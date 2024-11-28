@@ -30,7 +30,8 @@ public:
     void SetTextureSampler(const char* _name, GLuint _texUint, int _texUintId, int _value);
 
 
-    
+    void Use(); // Activates the shader program
+
 
 private:
     // Methods

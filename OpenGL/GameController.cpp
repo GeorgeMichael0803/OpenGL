@@ -47,6 +47,8 @@ void GameController::Initialize()
     suzanne->SetScale({ 1.0, 1.0, 1.0 });
     meshBoxes.push_back(suzanne);
 
+
+
     // Initialize the textured sphere for "Move Cubes to Sphere"
     sphere = new Mesh();
     sphere->Create(&shaderDiffuse, "../Assets/Models/Sphere_Suzanne_tex.obj");
@@ -120,10 +122,18 @@ void GameController::RunGame()
 // Handles the "Move Light" functionality
 void GameController::HandleMoveLight()
 {
-    // Update specular strength and color values from ToolWindow
+    // Use the diffuse shader program
+    glUseProgram(shaderDiffuse.GetProgramID());
+
+    // Reset Color By Position mode to false for other renders
+    GLint useColorByPositionLoc = glGetUniformLocation(shaderDiffuse.GetProgramID(), "useColorByPosition");
+    glUniform1i(useColorByPositionLoc, false);
+
+    // Pass specular strength from ToolWindow
     GLint specularStrengthLoc = glGetUniformLocation(shaderDiffuse.GetProgramID(), "material.specularStrength");
     glUniform1f(specularStrengthLoc, OpenGL::ToolWindow::SpecularStrengthValue);
 
+    // Pass RGB values from sliders to override color
     GLint specularColorLoc = glGetUniformLocation(shaderDiffuse.GetProgramID(), "light[0].specularColor");
     glUniform3f(
         specularColorLoc,
@@ -131,7 +141,6 @@ void GameController::HandleMoveLight()
         OpenGL::ToolWindow::SpecularColorGValue,
         OpenGL::ToolWindow::SpecularColorBValue
     );
-
     GLFWwindow* win = WindowController::GetInstance().GetWindow();
     Resolution currentResolution = WindowController::GetInstance().GetResolution();
 
@@ -283,8 +292,17 @@ void GameController::Cleanup()
 
 void GameController::HandleColorByPosition(GLFWwindow* win, const Resolution& currentResolution)
 {
-    // Render Suzanne with the "Color By Position" shader
+    // Enable the Color By Position shader
+    glUseProgram(shaderDiffuse.GetProgramID());
+
+    // Enable Color By Position mode
+    GLint useColorByPositionLoc = glGetUniformLocation(shaderDiffuse.GetProgramID(), "useColorByPosition");
+    glUniform1i(useColorByPositionLoc, true);
+
+    // Render Suzanne with the tint effect
     suzanne->Render(camera.GetProjection() * camera.GetView());
+
+    
 
     // Render the light sphere
     lightSphere->Render(camera.GetProjection() * camera.GetView()); // Render the light sphere
@@ -337,6 +355,9 @@ void GameController::ResetPositions()
     // Reset Suzanne Position
     suzanne->SetPosition({ 0, 0, 0 });
     suzanne->SetScale({ 1.0f, 1.0f, 1.0f }); // Reset scale
+
+    //suzanne2->SetPosition({ 0, 0, 0 });
+    //suzanne2->SetScale({ 1.0f, 1.0f, 1.0f }); // Reset scale
 
     // Reset Sphere Position and Scale
     sphere->SetPosition({ 0, 0, 0 });

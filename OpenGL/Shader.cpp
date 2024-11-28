@@ -125,3 +125,19 @@ void Shader::LoadShaders(const char* _vertexFilePath, const char* _fragmentFileP
     CreateShaderProgram(_vertexFilePath, _fragmentFilePath);
     LoadAttributes();
 }
+
+
+
+
+
+void Shader::Use()
+{
+    if (programID != 0)
+    {
+        glUseProgram(programID);
+    }
+    else
+    {
+        std::cerr << "Shader program ID is invalid. Ensure shaders are loaded correctly." << std::endl;
+    }
+}
