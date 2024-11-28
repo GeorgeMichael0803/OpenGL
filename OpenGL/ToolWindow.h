@@ -18,7 +18,8 @@ namespace OpenGL {
 		static float SpecularColorRValue;
 		static float SpecularColorGValue;
 		static float SpecularColorBValue;
-
+		property bool ResetButtonClicked; 
+		bool ResetLightButtonClicked = false;
 		ToolWindow(void)
 		{
 			InitializeComponent();
@@ -32,18 +33,6 @@ namespace OpenGL {
 		System::Windows::Forms::RadioButton^ radioButtonMoveLight;
 		System::Windows::Forms::RadioButton^ radioButtonColorByPosition;
 		System::Windows::Forms::RadioButton^ radioButtonMoveCubes;
-
-	protected:
-		~ToolWindow()
-		{
-			if (components)
-			{
-				delete components;
-			}
-		}
-
-	private:
-		
 		System::Windows::Forms::Button^ buttonResetLightPosition;
 		System::Windows::Forms::Button^ buttonResetSuzannePosition;
 		System::Windows::Forms::TrackBar^ trackBarSpecularStrength;
@@ -58,6 +47,19 @@ namespace OpenGL {
 		System::Windows::Forms::Label^ valueSpecularColorR;
 		System::Windows::Forms::Label^ valueSpecularColorG;
 		System::Windows::Forms::Label^ valueSpecularColorB;
+
+	protected:
+		~ToolWindow()
+		{
+			if (components)
+			{
+				delete components;
+			}
+		}
+
+	private:
+		
+
 
 		System::ComponentModel::Container^ components;
 
@@ -123,6 +125,7 @@ namespace OpenGL {
 			this->buttonResetLightPosition->Size = System::Drawing::Size(184, 23);
 			this->buttonResetLightPosition->TabIndex = 1;
 			this->buttonResetLightPosition->Text = L"Reset Light Position";
+			this->buttonResetLightPosition->Click += gcnew System::EventHandler(this, &ToolWindow::buttonResetLightPosition_Click);
 			// 
 			// buttonResetSuzannePosition
 			// 
@@ -131,6 +134,9 @@ namespace OpenGL {
 			this->buttonResetSuzannePosition->Size = System::Drawing::Size(184, 23);
 			this->buttonResetSuzannePosition->TabIndex = 15;
 			this->buttonResetSuzannePosition->Text = L"Reset Suzanne Position";
+			this->ResetButtonClicked = false;
+			this->buttonResetSuzannePosition->Click += gcnew System::EventHandler(this, &ToolWindow::OnResetButtonClick);
+
 			// 
 			// trackBarSpecularStrength
 			// 
@@ -297,6 +303,18 @@ namespace OpenGL {
 				SpecularColorBValue = static_cast<float>(trackBarSpecularColorB->Value) / 100.0f;
 				valueSpecularColorB->Text = (trackBarSpecularColorB->Value / 100.0f).ToString("F2");
 			}
+
+
+			void OnResetButtonClick(System::Object^ sender, System::EventArgs^ e)
+			{
+				this->ResetButtonClicked = true; // Set the flag when the button is clicked
+			}
+
+			void buttonResetLightPosition_Click(System::Object^ sender, System::EventArgs^ e)
+			{
+				ResetLightButtonClicked = true; // Set the flag to true
+			}
+
 
 
 };

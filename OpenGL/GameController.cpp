@@ -18,7 +18,7 @@ void GameController::Initialize()
     camera.LookAt({ 0, 0, 8 }, { 0, 0, 0 }, { 0, 1, 0 });
 
     // Initialize the light sphere for "Move Light"
-    Mesh* lightSphere = new Mesh();
+    lightSphere = new Mesh();
     lightSphere->Create(&shaderColor, "../Assets/Models/Sphere.obj");
     lightSphere->SetPosition({ 0, 0, 4 });
     lightSphere->SetScale({ 0.1, 0.1, 0.1 });
@@ -37,12 +37,18 @@ void GameController::Initialize()
     sphere->Create(&shaderDiffuse, "../Assets/Models/Sphere_Suzanne_tex.obj");
     sphere->SetPosition({ 0, 0, 0 });
     sphere->SetScale({ 1.0, 1.0, 1.0 });
+
+
+    arialFont = new Font();
+    arialFont->Create(&shaderFont, "../Assets/Fonts/arial.ttf", 100);
 }
 
 void GameController::RunGame()
 {
     OpenGL::ToolWindow^ toolWindow = gcnew OpenGL::ToolWindow();
     toolWindow->Show();
+    toolWindow->BringToFront();
+    toolWindow->TopMost = true; // Always keep the tool window on top
 
     shaderColor = Shader();
     shaderColor.LoadShaders("Color.vertexshader", "Color.fragmentshader");
@@ -62,7 +68,7 @@ void GameController::RunGame()
 
     do
     {
-        Resolution currentResolution = WindowController::GetInstance().GetResolution();
+        //Resolution currentResolution = WindowController::GetInstance().GetResolution();
 
         System::Windows::Forms::Application::DoEvents(); // Handle Windows form events
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -71,6 +77,13 @@ void GameController::RunGame()
         if (toolWindow->radioButtonMoveLight->Checked)
         {
             HandleMoveLight();
+
+            // Check if Reset Light Position button is clicked
+            if (toolWindow->ResetLightButtonClicked)
+            {
+                ResetPositions(); // Call ResetLightPosition logic
+                toolWindow->ResetLightButtonClicked = false; // Reset the flag
+            }
         }
         else if (toolWindow->radioButtonMoveCubes->Checked)
         {
@@ -79,7 +92,16 @@ void GameController::RunGame()
 
         else if (toolWindow->radioButtonColorByPosition->Checked)
         {
+            Resolution currentResolution = WindowController::GetInstance().GetResolution();
             HandleColorByPosition(win, currentResolution); // New logic for "Color By Position"
+
+
+            // Check if Reset Suzanne Position button is clicked
+            if (toolWindow->ResetButtonClicked)
+            {
+                ResetPositions(); // Call ResetPositions logic
+                toolWindow->ResetButtonClicked = false; // Reset the flag
+            }
         }
 
         glfwSwapBuffers(win);
@@ -101,20 +123,54 @@ void GameController::HandleMoveLight()
         OpenGL::ToolWindow::SpecularColorBValue
     ));
 
-    // Render the light sphere
-    for (auto light : lights)
+    GLFWwindow* win = WindowController::GetInstance().GetWindow();
+    Resolution currentResolution = WindowController::GetInstance().GetResolution();
+
+    // Check for left mouse button press to move lightSphere
+    if (glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
     {
-        light->Render(camera.GetProjection() * camera.GetView());
+        // Get mouse position
+        double mouseX, mouseY;
+        glfwGetCursorPos(win, &mouseX, &mouseY);
+
+        // Calculate the screen center
+        float centerX = static_cast<float>(currentResolution.width) / 2.0f;
+        float centerY = static_cast<float>(currentResolution.height) / 2.0f;
+
+        // Determine relative mouse position from the center
+        float relativeX = static_cast<float>(mouseX - centerX);
+        float relativeY = static_cast<float>(centerY - mouseY); // Y-axis is flipped in OpenGL
+
+        // Create a direction vector
+        glm::vec3 direction(relativeX, relativeY, 0.0f);
+
+        // Normalize the direction vector to ensure consistent movement direction
+        if (glm::length(direction) > 0.0f)
+        {
+            direction = glm::normalize(direction);
+        }
+
+        // Calculate speed based on distance from the center
+        float distanceFromCenter = glm::length(glm::vec2(relativeX, relativeY));
+        float speed = distanceFromCenter * 0.0001f; // Adjust factor for smoother movement
+
+        // Update lightSphere's position based on direction and speed
+        glm::vec3 newPosition = lightSphere->GetPosition() + (direction * speed);
+
+        // Directly set lightSphere's new position
+        lightSphere->SetPosition(newPosition);
     }
+
+    // Render the light sphere
+    lightSphere->Render(camera.GetProjection() * camera.GetView());
 
     // Rotate and render Suzanne
     glm::vec3 rotationSpeed = { 0.0f, 0.000f, 0.0f };
-    for (auto box : meshBoxes)
-    {
-        box->SetRotation(box->GetRotation() + rotationSpeed);
-        box->Render(camera.GetProjection() * camera.GetView());
-    }
+    suzanne->SetRotation(suzanne->GetRotation() + rotationSpeed);
+    suzanne->Render(camera.GetProjection() * camera.GetView());
 }
+
+
 
 // Handles the "Move Cubes to Sphere" functionality
 void GameController::HandleMoveCubesToSphere(GLFWwindow* win)
@@ -151,7 +207,7 @@ void GameController::HandleMoveCubesToSphere(GLFWwindow* win)
     }
 
     // Print the number of spawned cubes
-    PrintCubeCount();
+    RenderCubeCount();
 }
 
 // Spawns a cube at a random position around the sphere
@@ -169,10 +225,16 @@ void GameController::SpawnCube()
     cubes.push_back(cube);
 }
 
-// Prints the number of currently spawned cubes
-void GameController::PrintCubeCount()
+void GameController::RenderCubeCount()
 {
-    std::cout << "Cubes: " << cubes.size() << std::endl;
+    // Convert cube count to a string
+    std::string cubeText = "Cubes Rendered: " + std::to_string(cubes.size());
+
+    // Render the text on the screen
+    if (arialFont != nullptr)
+    {
+        arialFont->RenderText(cubeText, 10, 50, 0.5f, { 1.0f, 1.0f, 0.0f }); // Increased y from 10 to 50
+    }
 }
 
 // Cleans up resources
@@ -215,6 +277,9 @@ void GameController::HandleColorByPosition(GLFWwindow* win, const Resolution& cu
     // Render Suzanne with the "Color By Position" shader
     suzanne->Render(camera.GetProjection() * camera.GetView());
 
+    // Render the light sphere
+    lightSphere->Render(camera.GetProjection() * camera.GetView()); // Render the light sphere
+
     // Check for left mouse button press
     if (glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
     {
@@ -246,39 +311,35 @@ void GameController::HandleColorByPosition(GLFWwindow* win, const Resolution& cu
         // Update Suzanne's position based on direction and speed
         glm::vec3 newPosition = suzanne->GetPosition() + (direction * speed);
 
-        // Convert Suzanne's size to screen space dynamically
-        float suzanneScreenRadius = 0.5f; // Adjust based on Suzanne's size in world space
-
-        // Convert Suzanne's world position to screen coordinates
-        glm::vec4 clipSpacePos = camera.GetProjection() * camera.GetView() * glm::vec4(newPosition, 1.0f);
-        glm::vec3 screenCoordinates = glm::vec3(clipSpacePos) / clipSpacePos.w;
-
-        // Calculate Suzanne's new screen space bounds dynamically
-        float screenX = (screenCoordinates.x * 0.5f + 0.5f) * currentResolution.width;
-        float screenY = (1.0f - (screenCoordinates.y * 0.5f + 0.5f)) * currentResolution.height;
-
-        // Dynamically clamp Suzanne's position to the visible screen bounds
-        if (screenX - suzanneScreenRadius < 0)
-        {
-            newPosition.x = suzanne->GetPosition().x; // Stop horizontal movement to the left
-        }
-        if (screenX + suzanneScreenRadius > currentResolution.width)
-        {
-            newPosition.x = suzanne->GetPosition().x; // Stop horizontal movement to the right
-        }
-        if (screenY - suzanneScreenRadius < 0)
-        {
-            newPosition.y = suzanne->GetPosition().y; // Stop vertical movement downward
-        }
-        if (screenY + suzanneScreenRadius > currentResolution.height)
-        {
-            newPosition.y = suzanne->GetPosition().y; // Stop vertical movement upward
-        }
-
-        // Set Suzanne's adjusted position
+        // Directly set Suzanne's new position
         suzanne->SetPosition(newPosition);
     }
 }
+
+void GameController::ResetPositions()
+{
+    // Reset Camera Position
+    camera.LookAt({ 0, 0, 8 }, { 0, 0, 0 }, { 0, 1, 0 });
+
+    // Reset Light Position
+    lightSphere->SetPosition({ 0, 0, 4 });
+    lightSphere->SetScale({ 0.1f, 0.1f, 0.1f }); // Reset scale
+
+    // Reset Suzanne Position
+    suzanne->SetPosition({ 0, 0, 0 });
+    suzanne->SetScale({ 1.0f, 1.0f, 1.0f }); // Reset scale
+
+    // Reset Sphere Position and Scale
+    sphere->SetPosition({ 0, 0, 0 });
+    sphere->SetScale({ 0.5f, 0.5f, 0.5f });
+
+    // Reset Specular Strength
+    shaderDiffuse.SetFloat("material.specularStrength", 4.0f); // Specular strength
+    shaderDiffuse.SetVec3("light[0].specularColor", { 3.0f, 3.0f, 3.0f }); // Specular color
+}
+
+
+
 
 
 

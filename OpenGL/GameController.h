@@ -6,6 +6,7 @@
 #include "Mesh.h"
 #include "Camera.h"
 #include "WindowController.h"
+#include "Font.h"
 
 class GameController : public Singleton<GameController>
 {
@@ -38,18 +39,19 @@ private:
     Mesh* sphere;                 // Sphere model
     std::vector<Mesh*> cubes;     // Cube objects
     Mesh* suzanne = {}; // Suzanne model used in multiple modes
+    Mesh* lightSphere ;
 
-
+    Font* arialFont;
 
     
     // New private methods
     void HandleMoveCubesToSphere(GLFWwindow* win); // Logic for the "Move Cubes to Sphere" radio button
     void HandleColorByPosition(GLFWwindow* win, const Resolution& currentResolution);
     void SpawnCube();                              // Spawn a cube around the sphere
-    void PrintCubeCount();                         // Print the number of cubes in the scene
     void Cleanup();
     void HandleMoveLight();
-
+    void ResetPositions();
+    void RenderCubeCount();
 
     //vector<Camera> cameras;        // Array of Camera objects
     //vector<Resolution> resolutions; // Array of Resolution objects
