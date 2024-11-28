@@ -17,6 +17,21 @@ void GameController::Initialize()
     camera = Camera(WindowController::GetInstance().GetResolution());
     camera.LookAt({ 0, 0, 8 }, { 0, 0, 0 }, { 0, 1, 0 });
 
+
+
+    shaderColor = Shader();
+    shaderColor.LoadShaders("Color.vertexshader", "Color.fragmentshader");
+
+    shaderDiffuse = Shader();
+    shaderDiffuse.LoadShaders("Diffuse.vertexshader", "Diffuse.fragmentshader");
+
+    shaderFont = Shader();
+    shaderFont.LoadShaders("Font.vertexshader", "Font.fragmentshader");
+
+    shaderColorByPosition = Shader(); // Add this new shader
+    shaderColorByPosition.LoadShaders("ColorByPosition.vertexshader", "ColorByPosition.fragmentshader");
+
+
     // Initialize the light sphere for "Move Light"
     lightSphere = new Mesh();
     lightSphere->Create(&shaderColor, "../Assets/Models/Sphere.obj");
@@ -50,17 +65,7 @@ void GameController::RunGame()
     toolWindow->BringToFront();
     toolWindow->TopMost = true; // Always keep the tool window on top
 
-    shaderColor = Shader();
-    shaderColor.LoadShaders("Color.vertexshader", "Color.fragmentshader");
-
-    shaderDiffuse = Shader();
-    shaderDiffuse.LoadShaders("Diffuse.vertexshader", "Diffuse.fragmentshader");
-
-    shaderFont = Shader();
-    shaderFont.LoadShaders("Font.vertexshader", "Font.fragmentshader");
-
-    shaderColorByPosition = Shader(); // Add this new shader
-    shaderColorByPosition.LoadShaders("ColorByPosition.vertexshader", "ColorByPosition.fragmentshader");
+    
 
 
 
@@ -115,13 +120,17 @@ void GameController::RunGame()
 // Handles the "Move Light" functionality
 void GameController::HandleMoveLight()
 {
-    // Apply specular values from the tool window
-    shaderDiffuse.SetFloat("material.specularStrength", OpenGL::ToolWindow::SpecularStrengthValue);
-    shaderDiffuse.SetVec3("light[0].specularColor", glm::vec3(
+    // Update specular strength and color values from ToolWindow
+    GLint specularStrengthLoc = glGetUniformLocation(shaderDiffuse.GetProgramID(), "material.specularStrength");
+    glUniform1f(specularStrengthLoc, OpenGL::ToolWindow::SpecularStrengthValue);
+
+    GLint specularColorLoc = glGetUniformLocation(shaderDiffuse.GetProgramID(), "light[0].specularColor");
+    glUniform3f(
+        specularColorLoc,
         OpenGL::ToolWindow::SpecularColorRValue,
         OpenGL::ToolWindow::SpecularColorGValue,
         OpenGL::ToolWindow::SpecularColorBValue
-    ));
+    );
 
     GLFWwindow* win = WindowController::GetInstance().GetWindow();
     Resolution currentResolution = WindowController::GetInstance().GetResolution();

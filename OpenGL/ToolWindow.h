@@ -280,28 +280,21 @@ namespace OpenGL {
 			void OnSpecularStrengthChanged(System::Object^ sender, System::EventArgs^ e)
 			{
 				SpecularStrengthValue = static_cast<float>(trackBarSpecularStrength->Value);
-				valueSpecularStrength->Text = trackBarSpecularStrength->Value.ToString();
-				std::cout << "Specular Strength Changed: " << SpecularStrengthValue << std::endl;
 			}
 
 			void OnSpecularColorRChanged(System::Object^ sender, System::EventArgs^ e)
 			{
 				SpecularColorRValue = static_cast<float>(trackBarSpecularColorR->Value) / 100.0f;
-				valueSpecularColorR->Text = (trackBarSpecularColorR->Value / 100.0f).ToString("F2");
-				std::cout << "Specular Color R Changed: " << SpecularColorRValue << std::endl;
 			}
-
 
 			void OnSpecularColorGChanged(System::Object^ sender, System::EventArgs^ e)
 			{
 				SpecularColorGValue = static_cast<float>(trackBarSpecularColorG->Value) / 100.0f;
-				valueSpecularColorG->Text = (trackBarSpecularColorG->Value / 100.0f).ToString("F2");
 			}
 
 			void OnSpecularColorBChanged(System::Object^ sender, System::EventArgs^ e)
 			{
 				SpecularColorBValue = static_cast<float>(trackBarSpecularColorB->Value) / 100.0f;
-				valueSpecularColorB->Text = (trackBarSpecularColorB->Value / 100.0f).ToString("F2");
 			}
 
 
