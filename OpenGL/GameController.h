@@ -4,6 +4,7 @@
 #include "StandardIncludes.h"
 #include "Shader.h"
 #include "Mesh.h"
+#include "SkyBox.h"
 #include "Camera.h"
 
 class GameController : public Singleton<GameController>
@@ -25,16 +26,13 @@ private:
     Shader shaderColor = {};
     Shader shaderDiffuse = {};
     Shader shaderFont = {};
+    Shader shaderSkybox = {};
 
     std::vector<Mesh*> meshBoxes;
     std::vector<Mesh*> lights;
     Mesh* meshLight = {};
+    Skybox* skybox = nullptr;
 
-
-    //vector<Camera> cameras;        // Array of Camera objects
-    //vector<Resolution> resolutions; // Array of Resolution objects
-    //int currentCameraIndex = 0;          // Current Camera index
-    //int currentResolutionIndex = 0;      // Current Resolution index
 };
 
 #endif // GAME_CONTROLLER_H
