@@ -28,7 +28,7 @@ void GameController::Initialize()
     shaderFont = Shader();
     shaderFont.LoadShaders("Font.vertexshader", "Font.fragmentshader");
 
-    shaderColorByPosition = Shader(); // Add this new shader
+    shaderColorByPosition = Shader(); 
     shaderColorByPosition.LoadShaders("ColorByPosition.vertexshader", "ColorByPosition.fragmentshader");
 
 
@@ -100,14 +100,13 @@ void GameController::RunGame()
         else if (toolWindow->radioButtonColorByPosition->Checked)
         {
             Resolution currentResolution = WindowController::GetInstance().GetResolution();
-            HandleColorByPosition(win, currentResolution); // New logic for "Color By Position"
+            HandleColorByPosition(win, currentResolution); 
 
 
-            // Check if Reset Suzanne Position button is clicked
             if (toolWindow->ResetButtonClicked)
             {
-                ResetPositions(); // Call ResetPositions logic
-                toolWindow->ResetButtonClicked = false; // Reset the flag
+                ResetPositions(); 
+                toolWindow->ResetButtonClicked = false; 
             }
         }
 
@@ -122,18 +121,14 @@ void GameController::RunGame()
 // Handles the "Move Light" functionality
 void GameController::HandleMoveLight()
 {
-    // Use the diffuse shader program
     glUseProgram(shaderDiffuse.GetProgramID());
 
-    // Reset Color By Position mode to false for other renders
     GLint useColorByPositionLoc = glGetUniformLocation(shaderDiffuse.GetProgramID(), "useColorByPosition");
     glUniform1i(useColorByPositionLoc, false);
 
-    // Pass specular strength from ToolWindow
     GLint specularStrengthLoc = glGetUniformLocation(shaderDiffuse.GetProgramID(), "material.specularStrength");
     glUniform1f(specularStrengthLoc, OpenGL::ToolWindow::SpecularStrengthValue);
 
-    // Pass RGB values from sliders to override color
     GLint specularColorLoc = glGetUniformLocation(shaderDiffuse.GetProgramID(), "light[0].specularColor");
     glUniform3f(
         specularColorLoc,
@@ -144,45 +139,34 @@ void GameController::HandleMoveLight()
     GLFWwindow* win = WindowController::GetInstance().GetWindow();
     Resolution currentResolution = WindowController::GetInstance().GetResolution();
 
-    // Check for left mouse button press to move lightSphere
     if (glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
     {
-        // Get mouse position
         double mouseX, mouseY;
         glfwGetCursorPos(win, &mouseX, &mouseY);
 
-        // Calculate the screen center
         float centerX = static_cast<float>(currentResolution.width) / 2.0f;
         float centerY = static_cast<float>(currentResolution.height) / 2.0f;
 
-        // Determine relative mouse position from the center
         float relativeX = static_cast<float>(mouseX - centerX);
-        float relativeY = static_cast<float>(centerY - mouseY); // Y-axis is flipped in OpenGL
+        float relativeY = static_cast<float>(centerY - mouseY); 
 
-        // Create a direction vector
         glm::vec3 direction(relativeX, relativeY, 0.0f);
 
-        // Normalize the direction vector to ensure consistent movement direction
         if (glm::length(direction) > 0.0f)
         {
             direction = glm::normalize(direction);
         }
 
-        // Calculate speed based on distance from the center
         float distanceFromCenter = glm::length(glm::vec2(relativeX, relativeY));
-        float speed = distanceFromCenter * 0.0001f; // Adjust factor for smoother movement
+        float speed = distanceFromCenter * 0.0001f; 
 
-        // Update lightSphere's position based on direction and speed
         glm::vec3 newPosition = lightSphere->GetPosition() + (direction * speed);
 
-        // Directly set lightSphere's new position
         lightSphere->SetPosition(newPosition);
     }
 
-    // Render the light sphere
     lightSphere->Render(camera.GetProjection() * camera.GetView());
 
-    // Rotate and render Suzanne
     glm::vec3 rotationSpeed = { 0.0f, 0.000f, 0.0f };
     suzanne->SetRotation(suzanne->GetRotation() + rotationSpeed);
     suzanne->Render(camera.GetProjection() * camera.GetView());
@@ -193,23 +177,24 @@ void GameController::HandleMoveLight()
 // Handles the "Move Cubes to Sphere" functionality
 void GameController::HandleMoveCubesToSphere(GLFWwindow* win)
 {
-    // Render the sphere
+    glUseProgram(shaderDiffuse.GetProgramID());
+
+    GLint useColorByPositionLoc = glGetUniformLocation(shaderDiffuse.GetProgramID(), "useColorByPosition");
+    glUniform1i(useColorByPositionLoc, false);
+
     sphere->Render(camera.GetProjection() * camera.GetView());
 
-    // Spawn cubes when the left mouse button is pressed
     if (glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
     {
         SpawnCube();
     }
 
-    // Move cubes closer to the sphere
     for (int i = cubes.size() - 1; i >= 0; --i)
     {
         Mesh* cube = cubes[i];
         glm::vec3 direction = glm::normalize(sphere->GetPosition() - cube->GetPosition());
         cube->SetPosition(cube->GetPosition() + direction * 0.01f);
 
-        // Remove cubes when they reach the sphere center
         if (glm::length(cube->GetPosition() - sphere->GetPosition()) < 0.1f)
         {
             cube->Cleanup();
@@ -218,13 +203,11 @@ void GameController::HandleMoveCubesToSphere(GLFWwindow* win)
         }
     }
 
-    // Render all cubes
     for (auto cube : cubes)
     {
         cube->Render(camera.GetProjection() * camera.GetView());
     }
 
-    // Print the number of spawned cubes
     RenderCubeCount();
 }
 
@@ -234,9 +217,9 @@ void GameController::SpawnCube()
     Mesh* cube = new Mesh();
     cube->Create(&shaderDiffuse, "../Assets/Models/Cube.obj");
 
-    float x = (rand() % 200 - 100) / 10.0f; // Random X position
-    float y = (rand() % 200 - 100) / 10.0f; // Random Y position
-    float z = (rand() % 200 - 100) / 10.0f; // Random Z position
+    float x = (rand() % 200 - 100) / 10.0f; 
+    float y = (rand() % 200 - 100) / 10.0f; 
+    float z = (rand() % 200 - 100) / 10.0f; 
 
     cube->SetPosition({ x, y, z });
     cube->SetScale({ 0.5f, 0.5f, 0.5f });
@@ -245,13 +228,13 @@ void GameController::SpawnCube()
 
 void GameController::RenderCubeCount()
 {
-    // Convert cube count to a string
+    
     std::string cubeText = "Cubes Rendered: " + std::to_string(cubes.size());
 
-    // Render the text on the screen
+
     if (arialFont != nullptr)
     {
-        arialFont->RenderText(cubeText, 10, 50, 0.5f, { 1.0f, 1.0f, 0.0f }); // Increased y from 10 to 50
+        arialFont->RenderText(cubeText, 10, 50, 0.5f, { 1.0f, 1.0f, 0.0f }); 
     }
 }
 
@@ -292,80 +275,67 @@ void GameController::Cleanup()
 
 void GameController::HandleColorByPosition(GLFWwindow* win, const Resolution& currentResolution)
 {
-    // Enable the Color By Position shader
     glUseProgram(shaderDiffuse.GetProgramID());
 
-    // Enable Color By Position mode
     GLint useColorByPositionLoc = glGetUniformLocation(shaderDiffuse.GetProgramID(), "useColorByPosition");
     glUniform1i(useColorByPositionLoc, true);
 
-    // Render Suzanne with the tint effect
     suzanne->Render(camera.GetProjection() * camera.GetView());
 
     
 
-    // Render the light sphere
-    lightSphere->Render(camera.GetProjection() * camera.GetView()); // Render the light sphere
+    lightSphere->Render(camera.GetProjection() * camera.GetView()); 
 
-    // Check for left mouse button press
     if (glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
     {
-        // Get mouse position
+
         double mouseX, mouseY;
         glfwGetCursorPos(win, &mouseX, &mouseY);
 
-        // Calculate the screen center
         float centerX = static_cast<float>(currentResolution.width) / 2.0f;
         float centerY = static_cast<float>(currentResolution.height) / 2.0f;
 
-        // Determine relative mouse position from the center
         float relativeX = static_cast<float>(mouseX - centerX);
-        float relativeY = static_cast<float>(centerY - mouseY); // Y-axis is flipped in OpenGL
+        float relativeY = static_cast<float>(centerY - mouseY); 
 
-        // Create a direction vector
         glm::vec3 direction(relativeX, relativeY, 0.0f);
 
-        // Normalize the direction vector to ensure consistent movement direction
+       
         if (glm::length(direction) > 0.0f)
         {
             direction = glm::normalize(direction);
         }
 
-        // Calculate speed based on distance from the center
+        
         float distanceFromCenter = glm::length(glm::vec2(relativeX, relativeY));
-        float speed = distanceFromCenter * 0.0001f; // Adjust factor for smoother movement
+        float speed = distanceFromCenter * 0.0001f; 
 
-        // Update Suzanne's position based on direction and speed
         glm::vec3 newPosition = suzanne->GetPosition() + (direction * speed);
 
-        // Directly set Suzanne's new position
         suzanne->SetPosition(newPosition);
     }
 }
 
 void GameController::ResetPositions()
 {
-    // Reset Camera Position
+
     camera.LookAt({ 0, 0, 8 }, { 0, 0, 0 }, { 0, 1, 0 });
 
-    // Reset Light Position
+
     lightSphere->SetPosition({ 0, 0, 4 });
-    lightSphere->SetScale({ 0.1f, 0.1f, 0.1f }); // Reset scale
-
-    // Reset Suzanne Position
+    lightSphere->SetScale({ 0.1f, 0.1f, 0.1f }); 
+    
     suzanne->SetPosition({ 0, 0, 0 });
-    suzanne->SetScale({ 1.0f, 1.0f, 1.0f }); // Reset scale
+    suzanne->SetScale({ 1.0f, 1.0f, 1.0f }); 
 
-    //suzanne2->SetPosition({ 0, 0, 0 });
-    //suzanne2->SetScale({ 1.0f, 1.0f, 1.0f }); // Reset scale
 
-    // Reset Sphere Position and Scale
+ 
     sphere->SetPosition({ 0, 0, 0 });
     sphere->SetScale({ 0.5f, 0.5f, 0.5f });
 
-    // Reset Specular Strength
-    shaderDiffuse.SetFloat("material.specularStrength", 4.0f); // Specular strength
-    shaderDiffuse.SetVec3("light[0].specularColor", { 3.0f, 3.0f, 3.0f }); // Specular color
+
+    shaderDiffuse.SetFloat("material.specularStrength", 4.0f);
+    shaderDiffuse.SetVec3("light[0].specularColor", { 3.0f, 3.0f, 3.0f }); 
 }
 
 

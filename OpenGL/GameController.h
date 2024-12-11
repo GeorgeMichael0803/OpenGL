@@ -35,19 +35,19 @@ private:
 
 
 
-    // New variables for "Move Cubes to Sphere"
-    Mesh* sphere;                 // Sphere model
-    std::vector<Mesh*> cubes;     // Cube objects
-    Mesh* suzanne = {}; // Suzanne model used in multiple modes
+    
+    Mesh* sphere;                
+    std::vector<Mesh*> cubes;     
+    Mesh* suzanne = {}; 
     Mesh* lightSphere ;
 
     Font* arialFont;
 
     
     // New private methods
-    void HandleMoveCubesToSphere(GLFWwindow* win); // Logic for the "Move Cubes to Sphere" radio button
+    void HandleMoveCubesToSphere(GLFWwindow* win); 
     void HandleColorByPosition(GLFWwindow* win, const Resolution& currentResolution);
-    void SpawnCube();                              // Spawn a cube around the sphere
+    void SpawnCube();                              
     void Cleanup();
     void HandleMoveLight();
     void ResetPositions();
