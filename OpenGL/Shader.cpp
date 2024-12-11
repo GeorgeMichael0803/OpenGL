@@ -58,6 +58,8 @@ void Shader::LoadAttributes()
     attrVertices = glGetAttribLocation(programID, "vertices"); // Get a handle for the vertex buffer
     attrColors = glGetAttribLocation(programID, "colors");     // Get a handle for the colors buffer
     attrNormals = glGetAttribLocation(programID, "normals");   // Get a handle for the normals buffer
+    attrTangents = glGetAttribLocation(programID, "tangents"); // Get a handle for the tangents buffer
+    attrBitangents = glGetAttribLocation(programID, "bitangents"); // Get a handle for the bitangents buffer
     attrTexCoords = glGetAttribLocation(programID, "texCoords"); // Get a handle for the texture coords buffer
     attrWVP = glGetUniformLocation(programID, "WVP"); // Get a '' to the WVP
 }
@@ -124,4 +126,14 @@ void Shader::LoadShaders(const char* _vertexFilePath, const char* _fragmentFileP
 {
     CreateShaderProgram(_vertexFilePath, _fragmentFilePath);
     LoadAttributes();
+}
+
+
+void Shader::SetInt(const char* _name, int _value)
+{
+    GLint loc = glGetUniformLocation(programID, _name);
+    if (loc != -1)
+    {
+        glUniform1i(loc, _value);
+    }
 }

@@ -20,7 +20,7 @@ void GameController::Initialize()
     srand(time(0));
 
     camera = Camera(WindowController::GetInstance().GetResolution());
-    camera.LookAt({ 0, 0, 0 }, { 0, 0, 0 }, { 0, 1, 0 });
+    camera.LookAt({ 2, 2, 2 }, { 0, 0, 0 }, { 0, 1, 0 });
 
 
 }
@@ -42,36 +42,35 @@ void GameController::RunGame()
     shaderFont = Shader();
     shaderFont.LoadShaders("Font.vertexshader", "Font.fragmentshader");
 
-    shaderSkybox = Shader();
-    shaderSkybox.LoadShaders("SkyBox.vertexshader", "SkyBox.fragmentshader");
+    /*shaderSkybox = Shader();
+    shaderSkybox.LoadShaders("SkyBox.vertexshader", "SkyBox.fragmentshader");*/
 
 
 
 #pragma region Model Setup
+
+    #pragma region Light
     Mesh* light = new Mesh();
     light->Create(&shaderColor, "../Assets/Models/Sphere.obj");
-    light->SetPosition({ 5.0f, 0.0f, 0.0f });
+    light->SetPosition({ 0.0f, 0.8f, 1.0f });
     light->SetColor({ 1.0f, 1.0f, 1.0f });
     light->SetScale({ 0.1f, 0.1f, 0.1f });
     lights.push_back(light);
+    #pragma endregion
 
-    Mesh* Suzanne = new Mesh();
-    Suzanne->Create(&shaderDiffuse, "../Assets/Models/Suzanne.obj");
-    Suzanne->SetCameraPosition(camera.GetPosition());
-    Suzanne->SetScale({ 1.0f, 1.0f, 1.0f });
-    Suzanne->SetPosition({ 5.0f, 0.0f, 0.0f });
-    meshBoxes.push_back(Suzanne);
+    Mesh* mesh = nullptr;
 
-    Mesh* box = new Mesh();
-    box->Create(&shaderDiffuse, "../Assets/Models/Cube.obj");
-    box->SetCameraPosition(camera.GetPosition());
-    box->SetScale({ 1.0f, 1.0f, 1.0f });
-    box->SetPosition({ 5.0f, 0.0f, 5.0f });
-    meshBoxes.push_back(box);
+    mesh = new Mesh();
+    mesh->Create(&shaderDiffuse, "../Assets/Models/Fighter.obj");
+    mesh->SetCameraPosition(camera.GetPosition());
+    mesh->SetPosition({ 0.0f, 0.0f, 0.0f });
+    mesh->SetScale({ 0.002f, 0.002f, 0.002f });
+    meshes.push_back(mesh);
+
 #pragma endregion
 
 #pragma region Skybox Setup
-    skybox = new Skybox();
+    /*skybox = new Skybox();
     skybox->Create(&shaderSkybox, "../Assets/Models/Skybox.obj",
         {
             "../Assets/Textures/Skybox/right.jpg",
@@ -80,7 +79,7 @@ void GameController::RunGame()
             "../Assets/Textures/Skybox/bottom.jpg",
             "../Assets/Textures/Skybox/front.jpg",
             "../Assets/Textures/Skybox/back.jpg"
-        });
+        });*/
 #pragma endregion
 
 
@@ -137,9 +136,9 @@ void GameController::RunGame()
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the screen and depth buffer
 
-        camera.Rotate();
+        /*camera.Rotate();
         glm::mat4 view = glm::mat4(glm::mat3(camera.GetView()));
-        skybox->Render(camera.GetProjection() * view);
+        skybox->Render(camera.GetProjection() * view);*/
 
         for (auto light : lights)
         {
@@ -148,9 +147,9 @@ void GameController::RunGame()
 
         // Note we are now using a pointer so we are not doing a shallow copy , we could also use a reference if we were not on the heap
         glm::vec3 rotationSpeed = { 0.0f, 0.005f, 0.0f };
-        for (auto box : meshBoxes)
+        for (auto box : meshes)
         {
-            box->SetRotation(box->GetRotation() + rotationSpeed);
+            //box->SetRotation(box->GetRotation() + rotationSpeed);
             box->Render(camera.GetProjection() * camera.GetView());
         }
 
@@ -168,12 +167,12 @@ void GameController::RunGame()
     }
     lights.clear(); // Why not
 
-    for (auto box : meshBoxes)
+    for (auto box : meshes)
     {
         box->Cleanup();
         delete box;
     }
-    meshBoxes.clear(); // Why not
+    meshes.clear(); // Why not
 
     shaderFont.Cleanup();
     shaderDiffuse.Cleanup();
