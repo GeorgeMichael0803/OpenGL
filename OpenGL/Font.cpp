@@ -120,3 +120,12 @@ void Font::RenderText(std::string _text, float _x, float _y, float _scale, glm::
     glDisableVertexAttribArray(shader->GetAttrVertices());
     glBindTexture(GL_TEXTURE_2D, 0);
 }
+
+void Font::Cleanup()
+{
+    glDeleteBuffers(1, &vertexBuffer);
+    for (auto it : characters)
+    {
+        glGenTextures(1, &(it.second.textureID));
+    }
+}

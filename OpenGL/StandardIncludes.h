@@ -1,6 +1,8 @@
 #ifndef STANDARD_INCLUDES_H
 #define STANDARD_INCLUDES_H
 
+//#define GLM_ENABLE_EXPERIMENTAL
+
 // Include standard headers
 #include <stdio.h>
 #include <stdlib.h>
