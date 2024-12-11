@@ -1,10 +1,11 @@
 #include "GameController.h"
 #include "WindowController.h"
 #ifdef USE_TOOL_WINDOW
-#include "ToolWindow.h"
+
 #endif
 #include "Font.h"
 #include "GameTime.h"
+#include "ToolWindow.h"
 
 
 void GameController::Initialize()
@@ -33,10 +34,12 @@ void GameController::Initialize()
 void GameController::RunGame()
 {
 #ifdef USE_TOOL_WINDOW
+    
+#endif
+
     // Show the C++/CLI tool window
     OpenGL::ToolWindow^ window = gcnew OpenGL::ToolWindow();
     window->Show();
-#endif
 
     shaderColor = Shader();
     shaderColor.LoadShaders("Color.vertexshader", "Color.fragmentshader");
