@@ -20,6 +20,8 @@ public:
     GLuint GetAttrBitangents() { return attrBitangents; }
     GLuint GetAttrTexCoords() { return attrTexCoords; }
     GLuint GetAttrWVP() { return attrWVP; }
+    GLuint GetAttrInstanceMatrix() { return attrInstanceMatrix; }
+
 
 	//Methods 
 	void LoadShaders(const char* _vertexFilePath, const char* _fragmentFilePath);
@@ -49,6 +51,7 @@ private:
     GLuint attrBitangents = 0; //Handle for the attribute Tangents 
     GLuint attrTexCoords = 0; // Handle for the attribute Tex Coords
     GLuint attrWVP = 0;      
+    GLuint attrInstanceMatrix = 0;
     GLint result = GL_FALSE;
     int infoLogLength = 0;
 

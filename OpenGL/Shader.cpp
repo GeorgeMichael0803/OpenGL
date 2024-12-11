@@ -62,6 +62,8 @@ void Shader::LoadAttributes()
     attrBitangents = glGetAttribLocation(programID, "bitangents"); // Get a handle for the bitangents buffer
     attrTexCoords = glGetAttribLocation(programID, "texCoords"); // Get a handle for the texture coords buffer
     attrWVP = glGetUniformLocation(programID, "WVP"); // Get a '' to the WVP
+    attrInstanceMatrix = glGetAttribLocation(programID, "instanceMatrix"); // Get the instance matrix buffer
+
 }
 
 void Shader::EvaluateShader(int _infoLength, GLuint _id)

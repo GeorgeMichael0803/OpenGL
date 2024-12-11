@@ -21,10 +21,11 @@ void WindowController::NewWindow()
     // Open a window and create its OpenGL context
     glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-    M_ASSERT((window = glfwCreateWindow(1024, 768, "A sample scene", NULL, NULL)) != nullptr, "Failed to open GLFW window.");
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    M_ASSERT((window = glfwCreateWindow(1024, 768, "PROG31068", NULL, NULL)) != nullptr, "Failed to open GLFW window.");
     glfwMakeContextCurrent(window);
 }
+
 
 Resolution WindowController::GetResolution()
 {

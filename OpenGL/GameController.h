@@ -33,6 +33,8 @@ private:
     Mesh* meshLight = {};
     Skybox* skybox = nullptr;
 
+    GLuint vao;
+
 };
 
 #endif // GAME_CONTROLLER_H
