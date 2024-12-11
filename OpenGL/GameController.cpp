@@ -48,12 +48,20 @@ void GameController::RunGame()
     light->SetScale({ 0.1f, 0.1f, 0.1f });
     lights.push_back(light);
 
-    Mesh* box = new Mesh();
-    box->Create(&shaderDiffuse, "../Assets/Models/Suzanne.obj");
-    box->SetCameraPosition(camera.GetPosition());
-    box->SetScale({ 1.0f, 1.0f, 1.0f });
-    box->SetPosition({ 0.0f, 0.0f, 0.0f });
-    meshBoxes.push_back(box);
+    Mesh* Suzanne = new Mesh();
+    Suzanne->Create(&shaderDiffuse, "../Assets/Models/Suzanne.obj");
+    Suzanne->SetCameraPosition(camera.GetPosition());
+    Suzanne->SetScale({ 1.0f, 1.0f, 1.0f });
+    Suzanne->SetPosition({ 0.0f, 0.0f, 0.0f });
+    meshBoxes.push_back(Suzanne);
+
+    Mesh* plane = new Mesh();
+    plane->Create(&shaderDiffuse, "../Assets/Models/Plane.obj");
+    plane->SetCameraPosition(camera.GetPosition());
+    plane->SetScale({ 1.0f, 1.0f, 1.0f });
+    plane->SetPosition({ -1.0f, -1.0f, -1.0f });
+    meshBoxes.push_back(plane);
+
 
 
     Font* arialFont = new Font();
