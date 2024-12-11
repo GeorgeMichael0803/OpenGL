@@ -11,6 +11,9 @@
 #include <map>
 #include <fstream>
 #include <iostream>
+#include <algorithm>
+#include <sstream>
+
 
 using namespace std;
 

@@ -22,15 +22,108 @@ Mesh::~Mesh()
     textureSpecular.Cleanup();
 }
 
-void Mesh::Create(Shader* _shader, std::string _file, int _instanceCount)
 
+
+
+void Mesh::LoadASE(std::string& _file)
 {
-    shader = _shader;
+    ASEReader reader;
+    reader.ParseASEFile(_file.c_str());
+    ASEReader::MeshInfo& m = reader.GeoObjects[0]->MeshI;
+    ASEReader::Material* mat = reader.Materials[reader.GeoObjects[0]->MaterialID];
 
-    instanceCount = _instanceCount;
-    enableInstancing = instanceCount > 1 ? true : false;
+    std::vector<objl::Vector3> tangents;
+    std::vector<objl::Vector3> bitangents;
+    std::vector<objl::Vertex> triangle;
+    objl::Vector3 tangent;
+    objl::Vector3 bitangent;
+    int vCount = 0;
+
+    for (int count = 0; count < m.NumFaces; count++)
+    {
+        glm::vec3 tF = m.TexFaces[count];
+        glm::vec3 f = m.Faces[count];
+        triangle.clear();
+
+        objl::Vertex vert = objl::Vertex();
+        vert.Position = objl::Vector3(m.Vertices[(int)f.x].x, m.Vertices[(int)f.x].y, m.Vertices[(int)f.x].z);
+        vert.Normal = objl::Vector3(m.VertexNormals[vCount].x, m.VertexNormals[vCount].y, m.VertexNormals[vCount].z);
+        vert.TextureCoordinate = objl::Vector2(m.TexVertices[(int)tF.x].x, m.TexVertices[(int)tF.x].y);
+        triangle.push_back(vert);
+
+        vCount++;
 
 
+        vert = objl::Vertex();
+        vert.Position = objl::Vector3(m.Vertices[(int)f.y].x, m.Vertices[(int)f.y].y, m.Vertices[(int)f.y].z);
+        vert.Normal = objl::Vector3(m.VertexNormals[vCount].x, m.VertexNormals[vCount].y, m.VertexNormals[vCount].z);
+        vert.TextureCoordinate = objl::Vector2(m.TexVertices[(int)tF.y].x, m.TexVertices[(int)tF.y].y);
+        triangle.push_back(vert);
+        vCount++;
+
+        vert = objl::Vertex();
+        vert.Position = objl::Vector3(m.Vertices[(int)f.z].x, m.Vertices[(int)f.z].y, m.Vertices[(int)f.z].z);
+        vert.Normal = objl::Vector3(m.VertexNormals[vCount].x, m.VertexNormals[vCount].y, m.VertexNormals[vCount].z);
+        vert.TextureCoordinate = objl::Vector2(m.TexVertices[(int)tF.z].x, m.TexVertices[(int)tF.z].y);
+        triangle.push_back(vert);
+        vCount++;
+
+        CalculateTangents(triangle, tangent, bitangent);
+        tangents.push_back(tangent);
+        bitangents.push_back(bitangent);
+
+
+        for (int c = 0; c < 3; c++)
+        {
+            vertexData.push_back(triangle[c].Position.X);
+            vertexData.push_back(triangle[c].Position.Y);
+            vertexData.push_back(triangle[c].Position.Z);
+            vertexData.push_back(triangle[c].Normal.X);
+            vertexData.push_back(triangle[c].Normal.Y);
+            vertexData.push_back(triangle[c].Normal.Z);
+            vertexData.push_back(triangle[c].TextureCoordinate.X);
+            vertexData.push_back(triangle[c].TextureCoordinate.Y);
+
+            int index = (vCount / 3) - 1;
+            vertexData.push_back(tangents[index].X);
+            vertexData.push_back(tangents[index].Y);
+            vertexData.push_back(tangents[index].Z);
+            vertexData.push_back(bitangents[index].X);
+            vertexData.push_back(bitangents[index].Y);
+            vertexData.push_back(bitangents[index].Z);
+        }
+
+    }
+
+
+    textureDiffuse = Texture();
+    if (mat->Maps[0].Name == "DIFFUSE")
+    {
+        textureDiffuse.LoadTexture("../Assets/Textures/" + RemoveFolder(mat->Maps[0].TextureFileName));
+    }
+
+    textureSpecular = Texture();
+    if (mat->Maps[1].Name == "SPECULAR")
+    {
+        textureSpecular.LoadTexture("../Assets/Textures/" + RemoveFolder(mat->Maps[1].TextureFileName));
+    }
+
+    textureNormal = Texture();
+    if (mat->Maps[1].Name == "BUMP")
+    {
+        textureNormal.LoadTexture("../Assets/Textures/" + RemoveFolder(mat->Maps[1].TextureFileName));
+        enableNormalMaps = true;
+    }
+    else if (mat->Maps[2].Name == "BUMP")
+    {
+        textureNormal.LoadTexture("../Assets/Textures/" + RemoveFolder(mat->Maps[2].TextureFileName));
+        enableNormalMaps = true;
+    }
+
+}
+
+void Mesh::LoadOBJ(std::string& _file)
+{
     objl::Loader loader;
     M_ASSERT(loader.LoadFile(_file) == true, "Failed to load mesh"); // Load .obj file
 
@@ -74,32 +167,9 @@ void Mesh::Create(Shader* _shader, std::string _file, int _instanceCount)
                 vertexData.push_back(bitangents[index].Y);
                 vertexData.push_back(bitangents[index].Z);
             }
-
         }
     }
 
-
-    std::string diffuseMap = loader.LoadedMaterials[0].map_Kd;
-    const size_t last_slash_idx = diffuseMap.find_last_of("\\/");
-    if (std::string::npos != last_slash_idx)
-    {
-        diffuseMap.erase(0, last_slash_idx + 1);
-    }
-
-    /*textureDiffuse = Texture();
-    textureDiffuse.LoadTexture("../Assets/Textures/" + diffuseMap);
-
-    textureSpecular = Texture();
-    textureSpecular.LoadTexture("../Assets/Textures/" + diffuseMap);*/
-
-
-    glGenBuffers(1, &vertexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, vertexData.size() * sizeof(float), vertexData.data(), GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-
-#pragma region Texture Loading
     textureDiffuse = Texture();
     if (loader.LoadedMaterials[0].map_Kd != "")
     {
@@ -122,7 +192,39 @@ void Mesh::Create(Shader* _shader, std::string _file, int _instanceCount)
         enableNormalMaps = true;
         textureNormal.LoadTexture("../Assets/Textures/" + RemoveFolder(loader.LoadedMaterials[0].map_bump));
     }
-#pragma endregion
+}
+
+
+
+
+bool Mesh::EndsWith(const std::string& _str, const std::string& _suffix)
+{
+    return _str.size() >= _suffix.size() && 0 == _str.compare(_str.size() - _suffix.size(), _suffix.size(), _suffix);
+}
+
+
+void Mesh::Create(Shader* _shader, std::string _file, int _instanceCount)
+
+{
+    shader = _shader;
+
+    instanceCount = _instanceCount;
+    enableInstancing = instanceCount > 1 ? true : false;
+
+
+    if (EndsWith(_file, "ase"))
+    {
+        LoadASE(_file);
+    }
+    else
+    {
+        LoadOBJ(_file);
+    }
+
+    glGenBuffers(1, &vertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, vertexData.size() * sizeof(float), vertexData.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 
     if (enableInstancing)
@@ -223,6 +325,7 @@ void Mesh::Create(Shader* _shader, std::string _file, int _instanceCount)
 #pragma endregion
 
 }
+
 
 
 void Mesh::Cleanup()
@@ -464,3 +567,12 @@ void Mesh::CalculateTangents(std::vector<objl::Vertex> _vertices, objl::Vector3&
     _bitangent.Y = f * (-deltaUV2.X * edge1.Y + deltaUV1.X * edge2.Y);
     _bitangent.Z = f * (-deltaUV2.X * edge1.Z + deltaUV1.X * edge2.Z);
 }
+
+
+
+
+
+
+        
+
+

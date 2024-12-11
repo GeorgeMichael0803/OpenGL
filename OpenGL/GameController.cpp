@@ -75,23 +75,22 @@ void GameController::RunGame()
 
     Mesh* mesh = nullptr;
     #pragma region Cube (Commented out)
-    mesh = new Mesh();
+    /*mesh = new Mesh();
     mesh->Create(&shaderDiffuse, "../Assets/Models/Cube.obj", 1000);
     mesh->SetCameraPosition(camera.GetPosition());
     mesh->SetScale({ 0.1f, 0.1f, 0.1f });
     mesh->SetPosition({ 0.0f, 0.0f, 0.0f });
-    meshes.push_back(mesh);
+    meshes.push_back(mesh);*/
     #pragma endregion
 
 
     #pragma region Fighter
-    /*
     mesh = new Mesh();
-    mesh->Create(&shaderDiffuse, "../Assets/Models/Fighter.obj");
+    mesh->Create(&shaderDiffuse, "../Assets/Models/Fighter.ase");
     mesh->SetCameraPosition(camera.GetPosition());
     mesh->SetPosition({ 0.0f, 0.0f, 0.0f });
-    mesh->SetScale({ 0.0002f, 0.0002f, 0.0002f });
-    meshes.push_back(mesh);*/
+    mesh->SetScale({ 0.002f, 0.002f, 0.002f });
+    meshes.push_back(mesh);
     #pragma endregion
 
 #pragma endregion
@@ -169,7 +168,7 @@ void GameController::RunGame()
         glm::mat4 view = glm::mat4(glm::mat3(camera.GetView()));
         skybox->Render(camera.GetProjection() * view);*/
 
-        postProcessor.Start();
+        //postProcessor.Start();
 
         for (auto light : lights)
         {
@@ -186,7 +185,7 @@ void GameController::RunGame()
         }
 
 
-        postProcessor.End();
+        //postProcessor.End();
         arialFont->RenderText(std::to_string(GameTime::GetInstance().Fps()), 100, 100, 0.5f, { 1.0f, 1.0f, 0.0f });
 
         glfwSwapBuffers(win); // Swap the front and back buffers
