@@ -134,7 +134,7 @@ namespace OpenGL {
 			this->buttonResetSuzannePosition->Size = System::Drawing::Size(184, 23);
 			this->buttonResetSuzannePosition->TabIndex = 15;
 			this->buttonResetSuzannePosition->Text = L"Reset Suzanne Position";
-			this->ResetButtonClicked = false;
+			//this->ResetButtonClicked = false;
 			this->buttonResetSuzannePosition->Click += gcnew System::EventHandler(this, &ToolWindow::OnResetButtonClick);
 
 			// 
