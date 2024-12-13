@@ -92,17 +92,53 @@ void PostProcessor::Start()
     glEnable(GL_DEPTH_TEST);
 }
 
-void PostProcessor::End()
-{
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glDisable(GL_DEPTH_TEST); // Disable depth test so screen-space quad isn't discarded due to depth test.
+void PostProcessor::SetWireframe(bool enabled) {
+    wireframe = enabled;
+}
 
-    glUseProgram(postShader->GetProgramID()); // Use our shader
+void PostProcessor::SetFrequency(float freq) {
+    frequency = freq;
+}
+
+void PostProcessor::SetAmplitude(float amp) {
+    amplitude = amp;
+}
+
+void PostProcessor::SetTintBlue(bool enabled) {
+    tintBlue = enabled;
+}
+
+
+void PostProcessor::SetTime(float time)
+{
+    postShader->SetFloat("time", time);
+}
+
+
+
+void PostProcessor::End() {
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glDisable(GL_DEPTH_TEST); // Disable depth test for screen-space rendering.
+
+    glUseProgram(postShader->GetProgramID());
     postShader->SetTextureSampler("screenTexture", GL_TEXTURE0, 0, textureColorbuffer);
+    postShader->SetFloat("frequency", frequency);
+    postShader->SetFloat("amplitude", amplitude);
+    postShader->SetInt("tintBlue", tintBlue ? 1 : 0);
+
     BindVertices();
-    /*glLineWidth(5.0f);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);*/
+
+    if (wireframe) {
+        glLineWidth(5.0f);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Enable wireframe mode.
+    }
+
     glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    if (wireframe) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Reset to fill mode.
+    }
+
     glDisableVertexAttribArray(postShader->GetAttrVertices());
     glDisableVertexAttribArray(postShader->GetAttrTexCoords());
 }

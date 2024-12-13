@@ -5,6 +5,7 @@
 #include "Texture.h"
 #include "OBJ_Loader.h"
 #include "ASEReader.h"
+#include "Camera.h"
 
 class Shader;
 
@@ -20,6 +21,7 @@ public:
     void SetRotation(glm::vec3 _rotation) { rotation = _rotation; }
     glm::vec3 GetRotation() { return rotation; }
     void SetScale(glm::vec3 _scale) { scale = _scale; }
+    glm::vec3 GetScale() { return scale; }
     void SetColor(glm::vec3 _color) { color = _color; }
     glm::vec3 GetColor() { return color; }
     void SetLightDirection(glm::vec3 _lightDirection) { lightDirection = _lightDirection; }
@@ -32,6 +34,11 @@ public:
     void Cleanup();
     void CalculateTransform();
     void Render(glm::mat4 _pv);
+
+
+
+    void SetSpecularStrength(float strength) { specularStrength = strength; }
+    void SetSpecularColor(glm::vec3 color) { specularColor = color; }
 
 
 private:
@@ -76,6 +83,14 @@ private:
     glm::vec3 lightPosition{ 0.0f, 0.0f, 0.0f };
     glm::vec3 lightColor{ 1.0f, 1.0f, 1.0f };
     glm::vec3 cameraPosition{ 0.0f, 0.0f, 0.0f };
+
+
+    Camera camera = {};
+
+
+
+    float specularStrength = 8.0f; // Default value
+    glm::vec3 specularColor = { 3.0f, 3.0f, 3.0f }; // Default white
 
 };
 ;

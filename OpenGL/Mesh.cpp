@@ -3,7 +3,6 @@
 #include "GameController.h"
 #include <OBJ_Loader.h>
 
-
 // Removed Constructor
 
 Mesh::~Mesh()
@@ -227,21 +226,43 @@ void Mesh::Create(Shader* _shader, std::string _file, int _instanceCount)
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 
-    if (enableInstancing)
-    {
+    if (enableInstancing) {
         glGenBuffers(1, &instanceBuffer);
         glBindBuffer(GL_ARRAY_BUFFER, instanceBuffer);
 
-        srand(glfwGetTime()); // Initialize random seed
-        for (unsigned int i = 0; i < instanceCount; i++)
-        {
+        srand(static_cast<unsigned>(glfwGetTime())); // Initialize random seed
+        glm::vec3 cameraPosition = camera.GetPosition();
+
+        for (unsigned int i = 0; i < instanceCount; i++) {
             glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, glm::vec3(-20 + rand() % 40, -10 + rand() % 20, -10 + rand() % 20));
-            // model = glm::mat4(1.0f);
-            for (int x = 0; x < 4; x++)
-            {
-                for (int y = 0; y < 4; y++)
-                {
+
+            // Expand the position ranges further to spread the fish
+            glm::vec3 randomPosition = glm::vec3(
+                cameraPosition.x - 30.0f + static_cast<float>(rand()) / RAND_MAX * 60.0f,  // X: [camera.x - 30, camera.x + 30]
+                cameraPosition.y - 15.0f + static_cast<float>(rand()) / RAND_MAX * 30.0f,  // Y: [camera.y - 15, camera.y + 15]
+                cameraPosition.z - 30.0f + static_cast<float>(rand()) / RAND_MAX * 60.0f   // Z: [camera.z - 30, camera.z + 30]
+            );
+
+            // Random rotation applied to all axes
+            glm::vec3 randomRotation = glm::vec3(
+                glm::radians(static_cast<float>(rand() % 360)),  // X rotation
+                glm::radians(static_cast<float>(rand() % 360)),  // Y rotation
+                glm::radians(static_cast<float>(rand() % 360))   // Z rotation
+            );
+
+            // Scale between 0.01 and 0.3
+            glm::vec3 randomScale = glm::vec3(0.01f + static_cast<float>(rand()) / RAND_MAX * 0.29f); // Range: [0.01, 0.3]
+
+            // Transform model
+            model = glm::translate(model, randomPosition);
+            model = glm::rotate(model, randomRotation.x, glm::vec3(1.0f, 0.0f, 0.0f)); // X-axis
+            model = glm::rotate(model, randomRotation.y, glm::vec3(0.0f, 1.0f, 0.0f)); // Y-axis
+            model = glm::rotate(model, randomRotation.z, glm::vec3(0.0f, 0.0f, 1.0f)); // Z-axis
+            model = glm::scale(model, randomScale);
+
+            // Add model matrix to instance data
+            for (int x = 0; x < 4; x++) {
+                for (int y = 0; y < 4; y++) {
                     instanceData.push_back(model[x][y]);
                 }
             }
@@ -250,6 +271,13 @@ void Mesh::Create(Shader* _shader, std::string _file, int _instanceCount)
         glBufferData(GL_ARRAY_BUFFER, instanceCount * sizeof(glm::mat4), instanceData.data(), GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
+
+
+
+
+
+
+
 
 
     vertexStride = 8;
@@ -477,7 +505,8 @@ void Mesh::SetShaderVariables(glm::mat4 _pv)
 
         shader->SetVec3(Concat("light[", i, "].ambientColor").c_str(), { 0.1f, 0.1f, 0.1f });
         shader->SetVec3(Concat("light[", i, "].diffuseColor").c_str(), lights[i]->GetColor());
-        shader->SetVec3(Concat("light[", i, "].specularColor").c_str(), { 3.0f, 3.0f, 3.0f });
+        shader->SetVec3(Concat("light[", i, "].specularColor").c_str(), specularColor);
+
 
         shader->SetFloat(Concat("light[", i, "].constant").c_str(), 1.0f);
         shader->SetFloat(Concat("light[", i, "].linear").c_str(), 0.09f);
@@ -488,7 +517,7 @@ void Mesh::SetShaderVariables(glm::mat4 _pv)
     }
 
     // Configure Material
-    shader->SetFloat("material.specularStrength", 8);
+    shader->SetFloat("material.specularStrength", specularStrength);
     shader->SetTextureSampler("material.diffuseTexture", GL_TEXTURE0, 0, textureDiffuse.GetTexture());
     shader->SetTextureSampler("material.specularTexture", GL_TEXTURE1, 1, textureSpecular.GetTexture());
     shader->SetTextureSampler("material.normalTexture", GL_TEXTURE2, 2, textureNormal.GetTexture());

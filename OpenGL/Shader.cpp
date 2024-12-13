@@ -2,9 +2,9 @@
 
 Shader::~Shader()
 {
-    if (programID != 0)
-    {
+    if (programID != 0) {
         glDeleteProgram(programID);
+        programID = 0; // Avoid double deletion
     }
 }
 

@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "GameTime.h"
 
 Camera::Camera(const Resolution& _resolution, const float _near, const float _far)
 {
@@ -36,7 +37,18 @@ Camera::Camera(Resolution _resolution, glm::vec3 _position)
 void Camera::Rotate()
 {
     // https://gamedev.stackexchange.com/questions/96907/moving-an-object-in-a-circular-path
-    angle += 0.1f;
+
+
+
+    // Introduce a configurable rotation speed
+    float rotationSpeed = 45.0f; // Degrees per second
+
+    // Update angle based on deltaTime
+    angle += rotationSpeed * static_cast<float>(GameTime::GetInstance().DeltaTime());
+
+    // Ensure angle wraps around (0 to 360 degrees)
+    if (angle >= 360.0f) angle -= 360.0f;
+
     lookAt.x = cos(glm::radians(angle)) * 100;
     lookAt.z = sin(glm::radians(angle)) * 100;
 

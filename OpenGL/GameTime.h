@@ -13,6 +13,7 @@ public:
     double DeltaTime() { return deltaTime; }
     double StartTime() { return startTime; }
     double CurrentTime() { return currentTime; }
+    double TotalTime() const { return currentTime; }
 
 private:
     int frameCount = 0;
