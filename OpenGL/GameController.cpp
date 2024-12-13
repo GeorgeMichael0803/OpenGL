@@ -155,6 +155,7 @@ void GameController::RunGame()
 
     // Show the C++/CLI tool window
     OpenGL::ToolWindow^ window = gcnew OpenGL::ToolWindow();
+    window->TopMost = true;
     window->Show();
 
 
@@ -226,7 +227,6 @@ void GameController::RunGame()
         else if (window->radioButtonMoveLight->Checked)
         {
 
-            // Retrieve slider values
             float specularStrength = OpenGL::ToolWindow::SpecularStrengthValue;
             glm::vec3 specularColor = {
                 OpenGL::ToolWindow::SpecularColorRValue,
@@ -305,10 +305,9 @@ void GameController::RunGame()
                 tintChecked = false;
             }
 
-            // Retrieve slider values for frequency and amplitude
-            float frequency = static_cast<float>(window->trackBar1->Value); // Use the trackbar value directly
+            float frequency = static_cast<float>(window->trackBar1->Value); 
 
-            float amplitude = static_cast<float>(window->trackBar2->Value) / 100.0f; // Map slider value (0-1)
+            float amplitude = static_cast<float>(window->trackBar2->Value) / 100.0f; 
 
             HandleWaterScene(wireframeChecked, tintChecked, frequency, amplitude);
         }
@@ -355,21 +354,15 @@ void GameController::RunGame()
 void GameController::SpaceScene()
 {
 
-
-
-        ////update this so that it can include delta time 
         camera.Rotate();
         glm::mat4 view = glm::mat4(glm::mat3(camera.GetView()));
         skybox->Render(camera.GetProjection() * view );
-        //
 
 
         fighter->Render(camera.GetProjection() * camera.GetView());
 
         fish->Render(camera.GetProjection() * camera.GetView());
 
-
-        // Render information (no mesh position/scale)
         RenderSpaceSceneText();
 
 
@@ -381,12 +374,11 @@ void GameController::SpaceScene()
 
 void GameController::HandleMoveLight(float specularStrength, glm::vec3 specularColor)
 {
-    //GameTime::GetInstance().Update();
+
 
     GLFWwindow* win = WindowController::GetInstance().GetWindow();
     Resolution currentResolution = WindowController::GetInstance().GetResolution();
 
-    // Update fighter material properties
     fighter->SetSpecularStrength(specularStrength);
     fighter->SetSpecularColor(specularColor);
 
@@ -422,7 +414,6 @@ void GameController::HandleMoveLight(float specularStrength, glm::vec3 specularC
     fighter->SetRotation(fighter->GetRotation() + (rotationSpeed * (float)GameTime::GetInstance().DeltaTime())) ;
     fighter->Render(camera.GetProjection() * camera.GetView());
 
-    // Render information
     RenderTextGroup("Move Light Scene", fighter);
 
 }
@@ -436,47 +427,40 @@ void GameController::HandleTransform(bool _transform, bool _rotate, bool _scale)
     static double lastMouseX = 0.0, lastMouseY = 0.0;
     double mouseX, mouseY;
 
-    // Get current mouse position
     glfwGetCursorPos(win, &mouseX, &mouseY);
 
-    // Calculate mouse movement
     double deltaX = mouseX - lastMouseX;
     double deltaY = mouseY - lastMouseY;
 
-    // Store the current mouse position for the next frame
     lastMouseX = mouseX;
     lastMouseY = mouseY;
 
-    // Get mouse button states
     bool isLeftPressed = glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
     bool isMiddlePressed = glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS;
 
-    // Apply transformations concurrently based on checkbox selections
     if (isLeftPressed) {
-        // Translation logic (on XY axes for left mouse button)
+
         if (_transform) {
             glm::vec3 newPosition = fighter->GetPosition();
-            newPosition.x += static_cast<float>(deltaX) * 0.05f; // Adjust sensitivity
-            newPosition.y -= static_cast<float>(deltaY) * 0.05f; // Y-axis is inverted
+            newPosition.x += static_cast<float>(deltaX) * 0.05f; 
+            newPosition.y -= static_cast<float>(deltaY) * 0.05f; 
             fighter->SetPosition(newPosition);
         }
 
-        // Rotation logic (on XY axes for left mouse button)
         if (_rotate) {
             glm::vec3 newRotation = fighter->GetRotation();
-            newRotation.y += static_cast<float>(deltaX) * 0.1f; // Rotate on Y-axis
-            newRotation.x -= static_cast<float>(deltaY) * 0.1f; // Rotate on X-axis
+            newRotation.y += static_cast<float>(deltaX) * 0.1f; 
+            newRotation.x -= static_cast<float>(deltaY) * 0.1f; 
             fighter->SetRotation(newRotation);
         }
 
-        // Scaling logic (uniform scaling based on XY movement for left mouse button)
+
         if (_scale) {
             glm::vec3 newScale = fighter->GetScale();
-            // Tiny increments relative to small scale
+
             newScale.x += static_cast<float>(deltaX) * 0.00005f;
             newScale.y -= static_cast<float>(deltaY) * 0.00005f;
 
-            // Clamp the values (min: 0.0005f, max: 0.01f for small scale changes)
             newScale.x = glm::clamp(newScale.x, 0.0005f, 0.01f);
             newScale.y = glm::clamp(newScale.y, 0.0005f, 0.01f);
 
@@ -486,16 +470,16 @@ void GameController::HandleTransform(bool _transform, bool _rotate, bool _scale)
     }
 
     if (isMiddlePressed) {
-        // Translation, rotation, and scaling logic (on Z-axis for middle mouse button)
+      
         if (_transform) {
             glm::vec3 newPosition = fighter->GetPosition();
-            newPosition.z += static_cast<float>(deltaY) * 0.05f; // Move along Z-axis
+            newPosition.z += static_cast<float>(deltaY) * 0.05f; 
             fighter->SetPosition(newPosition);
         }
 
         if (_rotate) {
             glm::vec3 newRotation = fighter->GetRotation();
-            newRotation.z += static_cast<float>(deltaY) * 0.1f; // Rotate on Z-axis
+            newRotation.z += static_cast<float>(deltaY) * 0.1f; 
             fighter->SetRotation(newRotation);
         }
 
@@ -514,14 +498,12 @@ void GameController::HandleTransform(bool _transform, bool _rotate, bool _scale)
 
     fighter->Render(camera.GetProjection() * camera.GetView());
 
-    // Render information
     RenderTextGroup("Transform Scene", fighter);
 }
 
 
 void GameController::HandleWaterScene(bool _wireframe, bool tint, float frequency, float amplitude)
 {
-    // Pass parameters to PostProcessor
     postProcessor.SetWireframe(_wireframe);
     postProcessor.SetFrequency(frequency);
     postProcessor.SetAmplitude(amplitude);
@@ -530,19 +512,15 @@ void GameController::HandleWaterScene(bool _wireframe, bool tint, float frequenc
     shaderPost.SetFloat("time", GameTime::GetInstance().CurrentTime());
 
 
-    //// Pass the current game time to the shader
     //float currentTime = static_cast<float>(GameTime::GetInstance().CurrentTime());
     //postProcessor.SetTime(currentTime);
 
-    // Begin post-processing
     postProcessor.Start();
 
-    // Render the scene normally
     fish_water->Render(camera.GetProjection() * camera.GetView());
 
     RenderTextGroup("Water Scene", fish_water);
 
-    // End post-processing
     postProcessor.End();
 
 
@@ -558,24 +536,19 @@ void GameController::Reset()
     //fighter->SetCameraPosition(camera.GetPosition());
     fighter->SetPosition({ 0.0f, 0.0f, 0.0f });
     fighter->SetScale({ 0.002f, 0.002f, 0.002f });
-    fighter->SetRotation(glm::vec3( 0.0f, 0.0f, 0.0f)); // Rotate 90 degrees downward along X-axis
+    fighter->SetRotation(glm::vec3( 0.0f, 0.0f, 0.0f)); 
     fighter->SetSpecularStrength(8.0f);
     fighter->SetSpecularColor({ 3.0f, 3.0f, 3.0f });
 
     camera.LookAt({ 0, 0, 8 }, { 0, 0, 0 }, { 0, 1, 0 });
 
 
-
-   
-
-    // Ensure blending remains enabled for light rendering
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_CULL_FACE);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    // Reset wireframe mode if explicitly toggled earlier
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 }
@@ -586,23 +559,19 @@ void GameController::RenderTextGroup(const std::string& title, Mesh* mesh, bool 
 {
     int line = 0;
     float scale = 0.5f;
-    glm::vec3 color = { 1.0f, 1.0f, 0.0f }; // White color
+    glm::vec3 color = { 1.0f, 1.0f, 0.0f }; 
 
-    // Render "My name" at the top of the screen
-    arialFont->RenderText("George Michael", 10.0f, 25.0f, scale, color); // Hardcoded name
 
-    // Draw the title
+    arialFont->RenderText("George Michael", 10.0f, 25.0f, scale, color); 
+
     arialFont->RenderText(title, 10.0f, 50.0f + (line++ * 20), scale, color);
 
-    // Draw FPS
     arialFont->RenderText("FPS: " + std::to_string(GameTime::GetInstance().Fps()), 10.0f, 50.0f + (line++ * 20), scale, color);
 
-    // Get mouse position
     double mouseX, mouseY;
     glfwGetCursorPos(WindowController::GetInstance().GetWindow(), &mouseX, &mouseY);
     arialFont->RenderText("Mouse Pos: (" + std::to_string((int)mouseX) + ", " + std::to_string((int)mouseY) + ")", 10.0f, 50.0f + (line++ * 20), scale, color);
 
-    // Mouse button states
     GLFWwindow* win = WindowController::GetInstance().GetWindow();
     bool leftPressed = glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
     bool middlePressed = glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS;
@@ -610,7 +579,6 @@ void GameController::RenderTextGroup(const std::string& title, Mesh* mesh, bool 
     arialFont->RenderText("Left Button: " + std::string(leftPressed ? "Down" : "Up"), 10.0f, 50.0f + (line++ * 20), scale, color);
     arialFont->RenderText("Middle Button: " + std::string(middlePressed ? "Down" : "Up"), 10.0f, 50.0f + (line++ * 20), scale, color);
 
-    // Mesh position, rotation, and scale
     arialFont->RenderText("Position: (" +
         std::to_string(mesh->GetPosition().x) + ", " +
         std::to_string(mesh->GetPosition().y) + ", " +
@@ -637,26 +605,22 @@ void GameController::RenderSpaceSceneText()
         return;
 
     float scale = 0.5f;
-    glm::vec3 color = { 1.0f, 1.0f, 0.0f }; // Yellow color for texts
+    glm::vec3 color = { 1.0f, 1.0f, 0.0f }; 
 
-    int line = 0; // Tracks line position for spacing
-    float startX = 10.0f; // X-coordinate for left alignment
-    float startY = 50.0f; // Start position (top-left aligned with RenderTextGroup)
+    int line = 0; 
+    float startX = 10.0f; 
+    float startY = 50.0f; 
 
-    // Render "My name" at the top of the screen
     arialFont->RenderText("George Michael", startX, startY + (line++ * 20), scale, color);
 
-    // Draw FPS
     arialFont->RenderText("FPS: " + std::to_string(GameTime::GetInstance().Fps()),
         startX, startY + (line++ * 20), scale, color);
 
-    // Get mouse position
     double mouseX, mouseY;
     glfwGetCursorPos(WindowController::GetInstance().GetWindow(), &mouseX, &mouseY);
     arialFont->RenderText("Mouse Pos: (" + std::to_string((int)mouseX) + ", " + std::to_string((int)mouseY) + ")",
         startX, startY + (line++ * 20), scale, color);
 
-    // Mouse button states
     GLFWwindow* win = WindowController::GetInstance().GetWindow();
     bool leftPressed = glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
     bool middlePressed = glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS;
@@ -667,45 +631,3 @@ void GameController::RenderSpaceSceneText()
         startX, startY + (line++ * 20), scale, color);
 }
 
-
-
-
-
-//glm::vec3 GameController::getRandomPosition(float scale)
-//{
-//    float x = (rand() % 2001 - 1000) / 1000.0f * scale;
-//    float y = (rand() % 2001 - 1000) / 1000.0f * scale;
-//    float z = (rand() % 2001 - 1000) / 1000.0f * scale;
-//
-//    return glm::vec3(x, y, z);
-//}
-
-
-
-
-
-
-        /*camera.Rotate();
-        glm::mat4 view = glm::mat4(glm::mat3(camera.GetView()));
-        skybox->Render(camera.GetProjection() * view);*/
-
-        //postProcessor.Start();
-
-        //for (auto light : lights)
-        //{
-        //    light->Render(camera.GetProjection() * camera.GetView());
-        //}
-
-        //// Note we are now using a pointer so we are not doing a shallow copy , we could also use a reference if we were not on the heap
-        //glm::vec3 rotationSpeed = { 0.0f, 1.0f, 0.0f };
-        //for (auto mesh : meshes)
-        //{
-        //    mesh->SetRotation(mesh->GetRotation() + (rotationSpeed * (float)GameTime::GetInstance().DeltaTime()));
-        //    mesh->Render(camera.GetProjection() * camera.GetView());
-
-        //}
-
-
-        //postProcessor.End();
-        //arialFont = new Font();
-        //arialFont->RenderText(std::to_string(GameTime::GetInstance().Fps()), 100, 100, 0.5f, { 1.0f, 1.0f, 0.0f });

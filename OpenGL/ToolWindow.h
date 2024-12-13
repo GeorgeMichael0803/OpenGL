@@ -185,11 +185,11 @@ namespace OpenGL {
 			// 
 			this->trackBarSpecularStrength->Location = System::Drawing::Point(150, 84);
 			this->trackBarSpecularStrength->Maximum = 128;
-			this->trackBarSpecularStrength->Minimum = 0;
+			this->trackBarSpecularStrength->Minimum = 1;
 			this->trackBarSpecularStrength->Name = L"trackBarSpecularStrength";
 			this->trackBarSpecularStrength->Size = System::Drawing::Size(300, 45);
 			this->trackBarSpecularStrength->TabIndex = 3;
-			this->trackBarSpecularStrength->Value = 1;
+			this->trackBarSpecularStrength->Value = 4;
 			this->trackBarSpecularStrength->ValueChanged += gcnew System::EventHandler(this, &ToolWindow::OnSpecularStrengthChanged);
 			// 
 			// trackBarSpecularColorR
@@ -333,9 +333,9 @@ namespace OpenGL {
 			this->trackBar1->Name = L"trackBar1";
 			this->trackBar1->Size = System::Drawing::Size(395, 45);
 			this->trackBar1->TabIndex = 21;
-			this->trackBar1->Minimum = 0;   // Minimum frequency
-			this->trackBar1->Maximum = 4; // Maximum frequency
-			this->trackBar1->Value = 0;     // Default frequency value
+			this->trackBar1->Minimum = 0;   
+			this->trackBar1->Maximum = 4; 
+			this->trackBar1->Value = 0;     
 			this->trackBar1->ValueChanged += gcnew System::EventHandler(this, &ToolWindow::OnFrequencySliderChanged);
 
 
@@ -347,8 +347,8 @@ namespace OpenGL {
 			this->trackBar2->Size = System::Drawing::Size(404, 45);
 			this->trackBar2->TabIndex = 22;
 			this->trackBar2->Minimum = 0;
-			this->trackBar2->Maximum = 128; // Full range 0.00–1.00
-			this->trackBar2->Value = 0;     // Default to 0.00
+			this->trackBar2->Maximum = 128; 
+			this->trackBar2->Value = 0;     
 			this->trackBar2->ValueChanged += gcnew System::EventHandler(this, &ToolWindow::OnAmplitudeSliderChanged);
 			// 
 			// label1
@@ -451,50 +451,44 @@ namespace OpenGL {
 #pragma endregion
 
 	private:
-		// Specular Strength Slider Changed
 		void OnSpecularStrengthChanged(System::Object^ sender, System::EventArgs^ e)
 		{
-			// Scale Specular Strength to range [0.00, 4.00]
-			SpecularStrengthValue = static_cast<float>(trackBarSpecularStrength->Value) / 32.0f; // 128 -> 4.00 scaling
-			valueSpecularStrength->Text = SpecularStrengthValue.ToString("0.00"); // Update label
+			SpecularStrengthValue = static_cast<float>(trackBarSpecularStrength->Value) / 32.0f; 
+			valueSpecularStrength->Text = SpecularStrengthValue.ToString("0.00"); 
 		}
 
 
-		// Specular Color R Slider Changed
 		void OnSpecularColorRChanged(System::Object^ sender, System::EventArgs^ e)
 		{
 			SpecularColorRValue = static_cast<float>(trackBarSpecularColorR->Value) / 100.0f;
-			valueSpecularColorR->Text = SpecularColorRValue.ToString("0.00"); // Update label
+			valueSpecularColorR->Text = SpecularColorRValue.ToString("0.00"); 
 		}
 
-		// Specular Color G Slider Changed
 		void OnSpecularColorGChanged(System::Object^ sender, System::EventArgs^ e)
 		{
 			SpecularColorGValue = static_cast<float>(trackBarSpecularColorG->Value) / 100.0f;
-			valueSpecularColorG->Text = SpecularColorGValue.ToString("0.00"); // Update label
+			valueSpecularColorG->Text = SpecularColorGValue.ToString("0.00"); 
 		}
 
-		// Specular Color B Slider Changed
 		void OnSpecularColorBChanged(System::Object^ sender, System::EventArgs^ e)
 		{
 			SpecularColorBValue = static_cast<float>(trackBarSpecularColorB->Value) / 100.0f;
-			valueSpecularColorB->Text = SpecularColorBValue.ToString("0.00"); // Update label
+			valueSpecularColorB->Text = SpecularColorBValue.ToString("0.00"); 
 		}
 
-		// Update the label value to map the slider's current value to 0.00 - 4.00
+		
 		void OnFrequencySliderChanged(System::Object^ sender, System::EventArgs^ e)
 		{
-			float scaledValue = trackBar1->Value; // Map 0-128 to 0.00-4.00
-			label1->Text = scaledValue.ToString("0.00"); // Update the displayed value
+			float scaledValue = trackBar1->Value ; 
+			label1->Text = scaledValue.ToString("0.00"); 
 			float frequencyValue = scaledValue;
 		}
 
 		void OnAmplitudeSliderChanged(System::Object^ sender, System::EventArgs^ e)
 		{
-			// Scale Amplitude to range [0.00, 1.00]
-			float scaledValue = trackBar2->Value / 128.0f; // Map 0-128 to 0.00-1.00
-			label2->Text = scaledValue.ToString("0.00"); // Update label
-			float amplitudeValue = scaledValue; // Now ranges from 0.00 to 2.00
+			float scaledValue = trackBar2->Value / 128.0f; 
+			label2->Text = scaledValue.ToString("0.00"); 
+			float amplitudeValue = scaledValue;
 		
 		}
 
@@ -503,12 +497,12 @@ namespace OpenGL {
 
 		void OnResetButtonClick(System::Object^ sender, System::EventArgs^ e)
 		{
-			ResetButtonClicked = true; // Set the flag when the button is clicked
+			ResetButtonClicked = true; 
 		}
 
 		void buttonResetLightPosition_Click(System::Object^ sender, System::EventArgs^ e)
 		{
-			ResetLightButtonClicked = true; // Set the flag to true
+			ResetLightButtonClicked = true; 
 		}
 
 		

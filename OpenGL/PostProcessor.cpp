@@ -118,7 +118,7 @@ void PostProcessor::SetTime(float time)
 
 void PostProcessor::End() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glDisable(GL_DEPTH_TEST); // Disable depth test for screen-space rendering.
+    glDisable(GL_DEPTH_TEST); 
 
     glUseProgram(postShader->GetProgramID());
     postShader->SetTextureSampler("screenTexture", GL_TEXTURE0, 0, textureColorbuffer);
@@ -130,13 +130,13 @@ void PostProcessor::End() {
 
     if (wireframe) {
         glLineWidth(5.0f);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Enable wireframe mode.
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); 
     }
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
     if (wireframe) {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // Reset to fill mode.
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); 
     }
 
     glDisableVertexAttribArray(postShader->GetAttrVertices());

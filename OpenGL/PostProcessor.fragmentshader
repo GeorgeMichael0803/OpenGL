@@ -14,22 +14,17 @@ void main()
 {
     vec2 newTexCoords = retTexCoords;
 
-    // Calculate sine wave based on X-axis, frequency, and time
     float sineWave = sin(retTexCoords.x * frequency + time) * amplitude;
 
-    // Apply sine wave offset to the texture coordinates
     newTexCoords = retTexCoords + vec2(sineWave, sineWave);
 
-    // Sample the color from the transformed texture coordinates
     vec4 color = texture(screenTexture, newTexCoords);
 
-    // Apply blue tint if enabled
     if (tintBlue == 1) {
         color.r /= 2.0; // Reduce red channel
         color.g /= 2.0; // Reduce green channel
     }
 
-    // Darken color for wireframe mode
     if (wireframe == 1) {
         color.rgb *= 0.5; // Simulate wireframe appearance
     }
